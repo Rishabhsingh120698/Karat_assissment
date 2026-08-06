@@ -1,0 +1,78 @@
+
+let fruits = [
+    "Apple",
+    "Orange",
+    "Pear",
+    "Kiwi",
+    "Banana",
+    "Melon",
+    "Strawberry",
+    "Mango",
+    "Chiku",
+    "Grapes",
+    "Small-grapes"
+];
+
+
+// Question 1
+// Print Even Index Fruits
+
+
+console.log("Even Index Fruits");
+
+for (let i = 0; i < fruits.length; i++) {
+
+    if (i % 2 == 0) {
+
+        console.log(fruits[i]);
+
+    }
+
+}
+
+
+// Question 2
+// Print Odd Index Fruits
+
+
+console.log("Odd Index Fruits");
+
+for (let i = 0; i < fruits.length; i++) {
+
+    if (i % 2 != 0) {
+
+        console.log(fruits[i]);
+
+    }
+
+}
+
+
+// Question 3
+// Print Fruits on Multiple of 3 Index
+
+
+console.log("Multiple of 3 Index Fruits");
+
+for (let i = 0; i < fruits.length; i++) {
+
+    if (i % 3 == 0) {
+
+        console.log(fruits[i]);
+
+    }
+
+}
+
+
+
+
+// Question 4
+// Print 1st, 6th and Last Fruit
+
+
+console.log("1st Fruit  : " + fruits[0]);
+
+console.log("6th Fruit  : " + fruits[5]);
+
+console.log("Last Fruit : " + fruits[fruits.length - 1]);

@@ -1,0 +1,114 @@
+class Shape {
+
+    int length;
+    int breadth;
+    int side;
+    double radius;
+
+    // Default Constructor
+    Shape() {
+        System.out.println("Default Constructor Called");
+    }
+
+    // Rectangle Constructor
+    Shape(int length, int breadth) {
+        setRectangle(length, breadth);
+    }
+
+    // Square Constructor
+    Shape(int side) {
+        setSquare(side);
+    }
+
+    // Circle Constructor
+    Shape(double radius) {
+        setCircle(radius);
+    }
+
+    
+    public void setRectangle(int length, int breadth) {
+        this.length = length;
+        this.breadth = breadth;
+    }
+
+    public void setSquare(int side) {
+        this.side = side;
+    }
+
+    public void setCircle(double radius) {
+        this.radius = radius;
+    }
+
+   
+
+    public void displayRectangle() {
+        int area = length * breadth;
+        System.out.println("Area of Rectangle = " + area);
+    }
+
+    public void displaySquare() {
+        int area = side * side;
+        System.out.println("Area of Square = " + area);
+    }
+
+    public void displayCircle() {
+        double area = 3.14 * radius * radius;
+        System.out.println("Area of Circle = " + area);
+    }
+
+   
+    public void calculateArea(int diagonal1, int diagonal2, String shape) {
+
+        double area = (diagonal1 * diagonal2) / 2.0;
+
+        System.out.println("Area of Rhombus = " + area);
+
+    }
+
+   
+    public void calculateArea(double base, double height) {
+
+        double area = (base * height) / 2;
+
+        System.out.println("Area of Triangle = " + area);
+
+    }
+
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+       
+        Shape obj = new Shape();
+
+        System.out.println();
+
+       
+        Shape rectangle = new Shape(10,20);
+        rectangle.displayRectangle();
+
+        System.out.println();
+
+    
+        Shape square = new Shape(15);
+        square.displaySquare();
+
+        System.out.println();
+
+        
+        Shape circle = new Shape(7.0);
+        circle.displayCircle();
+
+        System.out.println();
+
+      
+        obj.calculateArea(10,20,"Rhombus");
+
+    
+        obj.calculateArea(12.0,15.0);
+
+    }
+
+}

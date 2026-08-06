@@ -1,0 +1,76 @@
+const promise1 = new Promise((resolve, reject) => {
+    resolve("Hello");
+});
+
+const promise2 = new Promise((resolve, reject) => {
+    resolve("You are learning");
+});
+
+const promise3 = new Promise((resolve, reject) => {
+    resolve("Javascript");
+});
+
+const promise4 = new Promise((resolve, reject) => {
+    reject("Bye");
+});
+
+// Question 1
+async function printOutput() {
+
+    console.log(await promise3);
+    console.log(await promise1);
+    console.log(await promise2);
+
+}
+
+// Question 2(a)
+async function doCodeSuccess() {
+
+    try {
+
+        const result = await promise2;
+
+        console.log(result);
+
+    }
+    catch(error) {
+
+        console.log(error);
+
+    }
+    finally {
+
+        console.log("Finally Block Executed");
+
+    }
+
+}
+
+// Question 2(b)
+async function doCodeFailure() {
+
+    try {
+
+        const result = await promise4;
+
+        console.log(result);
+
+    }
+    catch(error) {
+
+        console.log(error);
+
+    }
+    finally {
+
+        console.log("Finally Block Executed");
+
+    }
+
+}
+
+printOutput();
+
+doCodeSuccess();
+
+doCodeFailure();

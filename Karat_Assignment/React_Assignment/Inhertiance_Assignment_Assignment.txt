@@ -1,0 +1,139 @@
+
+class Product {
+
+    int id = 78;
+    String name = "Amul";
+
+    public void display() {
+
+        System.out.println("Product ID   : " + id);
+        System.out.println("Product Name : " + name);
+
+    }
+
+}
+
+
+class A extends Product {
+
+    int count = 50;
+    String category = "Butter";
+
+    @Override
+    public void display() {
+
+        super.display();
+
+        System.out.println("Count        : " + count);
+        System.out.println("Category     : " + category);
+
+    }
+
+}
+
+class B extends Product {
+
+    int count = 90;
+    String category = "Milk";
+
+    @Override
+    public void display() {
+
+        super.display();
+
+        System.out.println("Count        : " + count);
+        System.out.println("Category     : " + category);
+
+    }
+
+}
+
+
+class C extends Product {
+
+    int count = 56;
+    String category = "Choco";
+
+    @Override
+    public void display() {
+
+        super.display();
+
+        System.out.println("Count        : " + count);
+        System.out.println("Category     : " + category);
+
+    }
+
+}
+
+
+class SubA extends A {
+
+    int price = 30;
+
+    public void calculateTotalPrice() {
+
+        int totalPrice = count * price;
+
+       
+        System.out.println("Product ID   : " + id);
+        System.out.println("Product Name : " + name);
+        System.out.println("Category     : " + category);
+        System.out.println("Count        : " + count);
+        System.out.println("Price        : " + price);
+        System.out.println("Total Price  : " + totalPrice);
+
+    }
+
+}
+
+class SubB extends B {
+
+    int price = 10;
+
+    public void calculateTotalPrice() {
+
+        int totalPrice = count * price;
+
+     
+
+        System.out.println("Product ID   : " + id);
+        System.out.println("Product Name : " + name);
+        System.out.println("Category     : " + category);
+        System.out.println("Count        : " + count);
+        System.out.println("Price        : " + price);
+        System.out.println("Total Price  : " + totalPrice);
+
+    }
+
+}
+
+
+public class Main {
+
+    public static void main(String[] args) {
+
+       
+
+        A objA = new A();
+        objA.display();
+
+        
+
+        B objB = new B();
+        objB.display();
+
+       
+
+        C objC = new C();
+        objC.display();
+
+        SubA subA = new SubA();
+        subA.calculateTotalPrice();
+
+        SubB subB = new SubB();
+        subB.calculateTotalPrice();
+
+    }
+
+}

@@ -1,0 +1,126 @@
+
+abstract class Marks {
+
+    
+    abstract double getPercentage();
+
+}
+
+
+class A extends Marks {
+
+    int subject1;
+    int subject2;
+    int subject3;
+
+    
+    A(int subject1, int subject2, int subject3) {
+
+        initialize(subject1, subject2, subject3);
+
+    }
+
+    
+    public void initialize(int subject1, int subject2, int subject3) {
+
+        this.subject1 = subject1;
+        this.subject2 = subject2;
+        this.subject3 = subject3;
+
+    }
+
+    
+    @Override
+    public double getPercentage() {
+
+        int total = subject1 + subject2 + subject3;
+
+        return total / 3.0;
+
+    }
+
+   
+    public void display() {
+
+        System.out.println("------ Student A ------");
+
+        System.out.println("Subject 1 : " + subject1);
+        System.out.println("Subject 2 : " + subject2);
+        System.out.println("Subject 3 : " + subject3);
+
+        System.out.println("Percentage : " + getPercentage());
+
+    }
+
+}
+
+
+class B extends Marks {
+
+    int subject1;
+    int subject2;
+    int subject3;
+    int subject4;
+
+   
+    B(int subject1, int subject2, int subject3, int subject4) {
+
+        initialize(subject1, subject2, subject3, subject4);
+
+    }
+
+    
+    public void initialize(int subject1,
+                           int subject2,
+                           int subject3,
+                           int subject4) {
+
+        this.subject1 = subject1;
+        this.subject2 = subject2;
+        this.subject3 = subject3;
+        this.subject4 = subject4;
+
+    }
+
+   
+    @Override
+    public double getPercentage() {
+
+        int total = subject1 + subject2 + subject3 + subject4;
+
+        return total / 4.0;
+
+    }
+
+  
+    public void display() {
+
+        
+
+        System.out.println("Subject 1 : " + subject1);
+        System.out.println("Subject 2 : " + subject2);
+        System.out.println("Subject 3 : " + subject3);
+        System.out.println("Subject 4 : " + subject4);
+
+        System.out.println("Percentage : " + getPercentage());
+
+    }
+
+}
+
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        A studentA = new A(80, 90, 70);
+
+        B studentB = new B(85, 75, 90, 95);
+
+        studentA.display();
+
+        studentB.display();
+
+    }
+
+}

@@ -1,0 +1,43 @@
+class Calculate {
+
+   
+    public int calculate(int num1, int num2) {
+        return num1 + num2;
+    }
+
+   
+    public int calculate(int radius) {
+        return (int) (3.14 * radius * radius);
+    }
+
+   
+    public int calculate(int length, float breadth) {
+        return (int) (length * breadth);
+    }
+
+    
+    public int calculate(double side) {
+        return (int) (side * side);
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Calculate obj = new Calculate();
+
+        int addition = obj.calculate(10, 20);
+        System.out.println("Addition = " + addition);
+
+        int circleArea = obj.calculate(5);
+        System.out.println("Area of Circle = " + circleArea);
+
+        int rectangleArea = obj.calculate(10, 20f);
+        System.out.println("Area of Rectangle = " + rectangleArea);
+
+        int squareArea = obj.calculate(8.0);
+        System.out.println("Area of Square = " + squareArea);
+
+    }
+}

@@ -1,0 +1,86 @@
+
+abstract class MNC {
+
+  
+    MNC() {
+        System.out.println("MNC Constructor Called");
+    }
+
+
+    abstract void leaves();
+
+    abstract void holidays();
+
+
+    public void salary() {
+        System.out.println("Salary credited every month.");
+    }
+}
+
+
+
+abstract class Infosys extends MNC {
+
+ 
+    Infosys() {
+        super();
+        System.out.println("Infosys Constructor Called");
+    }
+
+
+    @Override
+    public void holidays() {
+        System.out.println("Infosys provides 10 public holidays.");
+    }
+
+
+    @Override
+    abstract void leaves();
+
+}
+
+
+class Hello extends Infosys {
+
+   
+    Hello() {
+        super();
+        System.out.println("Hello Constructor Called");
+    }
+
+   
+    @Override
+    public void leaves() {
+        System.out.println("Employees get 20 paid leaves.");
+    }
+
+  
+    public void employeeDetails() {
+        System.out.println("Employee belongs to Hello Project.");
+    }
+
+}
+
+
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        
+        MNC obj = new Hello();
+
+        obj.leaves();
+
+        obj.holidays();
+
+        obj.salary();
+
+        
+        Hello h = (Hello) obj;
+
+        h.employeeDetails();
+
+    }
+
+}

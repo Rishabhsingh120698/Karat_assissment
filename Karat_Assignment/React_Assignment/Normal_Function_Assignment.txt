@@ -1,0 +1,35 @@
+
+function normalFunction(principal, rate, time) {
+
+    let simpleInterest = (principal * rate * time) / 100;
+
+    return simpleInterest;
+
+}
+
+console.log("Normal Function");
+console.log("Simple Interest = " + normalFunction(10000, 5, 2));
+
+
+const functionExpression = function(principal, rate, time) {
+
+    let simpleInterest = (principal * rate * time) / 100;
+
+    return simpleInterest;
+
+};
+
+console.log("Function Expression");
+console.log("Simple Interest = " + functionExpression(15000, 6, 3));
+
+
+const arrowFunction = (principal, rate, time) => {
+
+    let simpleInterest = (principal * rate * time) / 100;
+
+    return simpleInterest;
+
+};
+
+console.log("Arrow Function");
+console.log("Simple Interest = " + arrowFunction(20000, 8, 2));

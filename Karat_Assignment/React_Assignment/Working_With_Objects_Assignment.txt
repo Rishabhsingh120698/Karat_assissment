@@ -1,0 +1,113 @@
+const Product = {
+
+    productName: "Laptop",
+
+    price: 50000,
+
+    colors: ["black", "white"],
+
+    brandName: "Dell",
+
+    licenseNo: "LIC01AB",
+
+    discount: 10,
+
+    distributor: [
+
+        {
+            name: "ABC",
+            code: 100
+        },
+
+        {
+            name: "ABC1",
+            code: 101
+        },
+
+        {
+            name: "ABC2",
+            code: 102
+        }
+
+    ],
+
+    platforms: ["Amazon", "Flipkart", "eBay"],
+
+    country: "India"
+
+};
+
+
+
+// Question 1
+// Print Product Name, Price and Colors
+
+
+const { productName, price, colors } = Product;
+
+console.log("Question 1");
+
+console.log("Product Name :", productName);
+
+console.log("Price :", price);
+
+console.log("Colors :", colors[0]);
+
+console.log("Colors :", colors[1]);
+
+console.log("\n");
+
+
+
+// Question 2
+// Print Distributor Details
+
+
+const { distributor, licenseNo } = Product;
+
+console.log("Question 2");
+
+console.log(distributor[0].name, distributor[0].code, licenseNo);
+
+console.log(distributor[1].name, distributor[1].code, licenseNo);
+
+console.log(distributor[2].name, distributor[2].code, licenseNo);
+
+
+
+
+// Question 3
+// Product Name with Platform, Color and Price
+
+
+const { platforms } = Product;
+
+console.log("Question 3");
+
+console.log(productName, platforms[0], colors[0], price);
+
+console.log(productName, platforms[1], colors[1], price);
+
+console.log(productName, platforms[2], colors[0], price);
+
+console.log("\n");
+
+
+
+// Question 4
+// Rest Operator
+
+
+const {
+
+    productName: pName,
+
+    price: pPrice,
+
+    ...remainingDetails
+
+} = Product;
+
+console.log("Question 4");
+
+console.log(remainingDetails);

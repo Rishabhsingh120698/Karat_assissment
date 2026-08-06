@@ -1,0 +1,237 @@
+abstract class Vehicle {
+
+    int speed = 100;
+    long distance = 500;
+
+    
+    Vehicle() {
+        System.out.println("Vehicle default constructor called");
+    }
+
+    
+    Vehicle(int speed, long distance) {
+        this.speed = speed;
+        this.distance = distance;
+    }
+
+   
+    abstract void run();
+
+    abstract void stop();
+
+    
+    public void fuel(int quantity) {
+        System.out.println("Fuel quantity = " + quantity);
+    }
+
+    public void fuel(float quantity, String type) {
+        System.out.println("Fuel quantity = " + quantity);
+        System.out.println("Fuel type = " + type);
+    }
+
+    public void fuel(char type, int quantity) {
+        System.out.println("Fuel type = " + type);
+        System.out.println("Fuel quantity = " + quantity);
+    }
+}
+
+
+// ===============================
+// Two Wheeler
+// ===============================
+
+class TwoWheeler extends Vehicle {
+
+    int speed = 80;
+    long distance = 300;
+    int nos_of_tyre = 2;
+
+   
+    TwoWheeler() {
+        super();
+    }
+
+    @Override
+    void run() {
+        System.out.println("Two Wheeler is running");
+    }
+
+    @Override
+    void stop() {
+        System.out.println("Two Wheeler is stopped");
+    }
+
+    public void display() {
+
+        System.out.println("Two Wheeler Details");
+
+        System.out.println("Speed = " + speed);
+        System.out.println("Distance = " + distance);
+        System.out.println("Number of Tyres = " + nos_of_tyre);
+
+        System.out.println("Parent Speed = " + super.speed);
+        System.out.println("Parent Distance = " + super.distance);
+    }
+}
+
+
+
+class ThreeWheeler extends Vehicle {
+
+    int speed = 60;
+    long distance = 250;
+    int nos_of_tyre = 3;
+
+   
+    ThreeWheeler() {
+        super();
+    }
+
+    @Override
+    void run() {
+        System.out.println("Three Wheeler is running");
+    }
+
+    @Override
+    void stop() {
+        System.out.println("Three Wheeler is stopped");
+    }
+
+    public void display() {
+
+        System.out.println("Three Wheeler Details");
+
+        System.out.println("Speed = " + speed);
+        System.out.println("Distance = " + distance);
+        System.out.println("Number of Tyres = " + nos_of_tyre);
+
+        System.out.println("Parent Speed = " + super.speed);
+        System.out.println("Parent Distance = " + super.distance);
+    }
+}
+
+
+
+
+class FourWheeler extends Vehicle {
+
+    int speed = 120;
+    long distance = 700;
+    int nos_of_tyre = 4;
+
+   
+    FourWheeler() {
+        super();
+    }
+
+    @Override
+    void run() {
+        System.out.println("Four Wheeler is running");
+    }
+
+    @Override
+    void stop() {
+        System.out.println("Four Wheeler is stopped");
+    }
+
+    public void display() {
+
+        System.out.println("Four Wheeler Details");
+
+        System.out.println("Speed = " + speed);
+        System.out.println("Distance = " + distance);
+        System.out.println("Number of Tyres = " + nos_of_tyre);
+
+        System.out.println("Parent Speed = " + super.speed);
+        System.out.println("Parent Distance = " + super.distance);
+    }
+}
+
+
+
+class EightWheeler extends Vehicle {
+
+    int speed = 90;
+    long distance = 1000;
+    int nos_of_tyre = 8;
+
+    
+    EightWheeler() {
+        super();
+    }
+
+    @Override
+    void run() {
+        System.out.println("Eight Wheeler is running");
+    }
+
+    @Override
+    void stop() {
+        System.out.println("Eight Wheeler is stopped");
+    }
+
+    public void display() {
+
+        System.out.println("Eight Wheeler Details");
+
+        System.out.println("Speed = " + speed);
+        System.out.println("Distance = " + distance);
+        System.out.println("Number of Tyres = " + nos_of_tyre);
+
+        System.out.println("Parent Speed = " + super.speed);
+        System.out.println("Parent Distance = " + super.distance);
+    }
+}
+
+
+public class Main {
+
+    public static void main(String[] args) {
+
+      
+
+        Vehicle vehicle;
+
+        vehicle = new TwoWheeler();
+
+        vehicle.run();
+        vehicle.stop();
+
+        TwoWheeler two = (TwoWheeler) vehicle;
+        two.display();
+
+        vehicle = new ThreeWheeler();
+
+        vehicle.run();
+        vehicle.stop();
+
+        ThreeWheeler three = (ThreeWheeler) vehicle;
+        three.display();
+
+
+        vehicle = new FourWheeler();
+
+        vehicle.run();
+        vehicle.stop();
+
+        FourWheeler four = (FourWheeler) vehicle;
+        four.display();
+
+
+        vehicle = new EightWheeler();
+
+        vehicle.run();
+        vehicle.stop();
+
+        EightWheeler eight = (EightWheeler) vehicle;
+        eight.display();
+
+
+        vehicle.fuel(10);
+
+        vehicle.fuel(15.5f, "Petrol");
+
+        vehicle.fuel('D', 20);
+
+    }
+}
