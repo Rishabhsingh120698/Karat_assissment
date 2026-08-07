@@ -1,3 +1,4 @@
+package Assissment_executors;
 import java.math.BigInteger;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -14,7 +15,7 @@ public class ParallelNumberCalculator {
         CompletableFuture<Boolean> primeFuture =
                 CompletableFuture.supplyAsync(() -> isPrime(number), executorService);
 
-        CompletableFuture<BigInteger> factorialFuture =
+        CompletableFuture<Integer> factorialFuture =
                 CompletableFuture.supplyAsync(() -> factorial(number), executorService);
 
         CompletableFuture<Integer> squareFuture =
@@ -44,7 +45,7 @@ public class ParallelNumberCalculator {
     }
 
         private static Integer factorial(int number) {
-        Integer result = BigInteger.ONE;
+        int result = 1;
 
         for (int i = 2; i <= number; i++) {
             result *= i;
