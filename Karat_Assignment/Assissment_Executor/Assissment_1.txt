@@ -1,0 +1,60 @@
+import java.math.BigInteger;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class ParallelNumberCalculator {
+
+    public static void main(String[] args) {
+
+        int number = 5;
+
+        ExecutorService executorService = Executors.newFixedThreadPool(3);
+
+        CompletableFuture<Boolean> primeFuture =
+                CompletableFuture.supplyAsync(() -> isPrime(number), executorService);
+
+        CompletableFuture<BigInteger> factorialFuture =
+                CompletableFuture.supplyAsync(() -> factorial(number), executorService);
+
+        CompletableFuture<Integer> squareFuture =
+                CompletableFuture.supplyAsync(() -> calculateSquare(number), executorService);
+
+        
+        CompletableFuture.allOf(primeFuture, factorialFuture, squareFuture).join();
+
+        System.out.println("Prime: " + primeFuture.join());
+        System.out.println("Factorial: " + factorialFuture.join());
+        System.out.println("Square: " + squareFuture.join());
+
+        executorService.shutdown();
+    }
+
+        private static boolean isPrime(int number) {
+        if (number <= 1) {
+            return false;
+        }
+
+        for (int i = 2; i <= Math.sqrt(number); i++) {
+            if (number % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+        private static Integer factorial(int number) {
+        Integer result = BigInteger.ONE;
+
+        for (int i = 2; i <= number; i++) {
+            result *= i;
+        }
+
+        return result;
+    }
+
+    
+    private static int calculateSquare(int number) {
+        return number * number;
+    }
+}
