@@ -1,0 +1,73 @@
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class StudentMarksProcessing {
+
+    public static void main(String[] args) {
+
+        String studentName = "Rahul";
+
+        int maths = 80;
+        int java = 75;
+        int database = 90;
+
+        int[] marks = {maths, java, database};
+
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+
+        CompletableFuture<Integer> totalFuture =
+                CompletableFuture.supplyAsync(() -> {
+                    int total = 0;
+                    for (int mark : marks) {
+                        total += mark;
+                    }
+                    return total;
+                }, executor);
+
+        CompletableFuture<Double> averageFuture =
+                CompletableFuture.supplyAsync(() -> {
+                    int total = 0;
+                    for (int mark : marks) {
+                        total += mark;
+                    }
+                    return (double) total / marks.length;
+                }, executor);
+
+        CompletableFuture<Integer> highestFuture =
+                CompletableFuture.supplyAsync(() -> {
+                    int highest = marks[0];
+                    for (int mark : marks) {
+                        if (mark > highest) {
+                            highest = mark;
+                        }
+                    }
+                    return highest;
+                }, executor);
+
+        CompletableFuture<String> resultFuture =
+                CompletableFuture.supplyAsync(() -> {
+                    for (int mark : marks) {
+                        if (mark < 35) {
+                            return "FAIL";
+                        }
+                    }
+                    return "PASS";
+                }, executor);
+
+        CompletableFuture.allOf(
+                totalFuture,
+                averageFuture,
+                highestFuture,
+                resultFuture
+        ).join();
+
+        System.out.println("Student: " + studentName);
+        System.out.println("Total: " + totalFuture.join());
+        System.out.printf("Average: %.2f%n", averageFuture.join());
+        System.out.println("Highest: " + highestFuture.join());
+        System.out.println("Result: " + resultFuture.join());
+
+        executor.shutdown();
+    }
+}
