@@ -1,0 +1,8 @@
+public record Flight(
+int flightId,
+String flightNumber,
+String source,
+String destination,
+double price
+) {
+}

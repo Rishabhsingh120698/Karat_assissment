@@ -1,0 +1,73 @@
+public class Assignment4 {
+
+public static void main(String[] args) {
+
+    String flightNumber = "AI202";
+    double flightPrice = 6500;
+
+    String ticketClass = "BUSINESS";
+    String seatType = "Window";
+
+
+    // Switch expression for baggage allowance
+
+    int baggageAllowance = switch (ticketClass) {
+
+        case "ECONOMY" -> 15;
+
+        case "PREMIUM" -> 25;
+
+        case "BUSINESS" -> {
+            int allowance = 35;
+            yield allowance;
+        }
+
+        case "FIRST" -> 50;
+
+        default -> {
+            System.out.println("Invalid ticket class!");
+            yield 0;
+        }
+    };
+
+
+    // Switch expression for seat charges
+
+    int seatCharge = switch (seatType) {
+
+        case "Window" -> 1000;
+
+        case "Middle" -> 500;
+
+        case "Aisle" -> 750;
+
+        default -> {
+            System.out.println("Invalid seat type!");
+            yield 0;
+        }
+    };
+
+
+    // Calculate final ticket price
+
+    double finalPrice = flightPrice + seatCharge;
+
+
+    // Display booking information
+
+    System.out.println("----- TICKET INFORMATION -----");
+
+    System.out.println("Flight Number: " + flightNumber);
+    System.out.println("Ticket Class: " + ticketClass);
+    System.out.println("Seat Type: " + seatType);
+    System.out.println("Flight Price: ₹" + flightPrice);
+    System.out.println(
+            "Baggage Allowance: " +
+            baggageAllowance +
+            " KG"
+    );
+    System.out.println("Seat Charge: ₹" + seatCharge);
+    System.out.println("Final Ticket Price: ₹" + finalPrice);
+}
+
+}

@@ -1,0 +1,6 @@
+public record Passenger(
+int passengerId,
+String name,
+String passportNumber
+) {
+}

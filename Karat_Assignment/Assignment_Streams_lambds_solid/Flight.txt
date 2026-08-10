@@ -1,0 +1,48 @@
+public class Flight {
+private int flightId;
+private String flightNumber;
+private String source;
+private String destination;
+private double price;
+
+
+public Flight(int flightId, String flightNumber, String source,
+              String destination, double price) {
+    this.flightId = flightId;
+    this.flightNumber = flightNumber;
+    this.source = source;
+    this.destination = destination;
+    this.price = price;
+}
+
+public int getFlightId() {
+    return flightId;
+}
+
+public String getFlightNumber() {
+    return flightNumber;
+}
+
+public String getSource() {
+    return source;
+}
+
+public String getDestination() {
+    return destination;
+}
+
+public double getPrice() {
+    return price;
+}
+
+@Override
+public String toString() {
+    return "Flight ID: " + flightId +
+            ", Flight Number: " + flightNumber +
+            ", Source: " + source +
+            ", Destination: " + destination +
+            ", Price: ₹" + price;
+}
+
+
+}

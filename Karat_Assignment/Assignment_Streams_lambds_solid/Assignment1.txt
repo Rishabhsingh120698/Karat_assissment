@@ -1,0 +1,90 @@
+import java.util.ArrayList;
+import java.util.List;
+
+public class Assignment1 {
+
+public static void main(String[] args) {
+
+    List<Flight> flights = new ArrayList<>();
+
+    flights.add(new Flight(1, "AI101", "Mumbai", "Delhi", 4500));
+    flights.add(new Flight(2, "AI202", "Pune", "Bangalore", 6500));
+    flights.add(new Flight(3, "6E303", "Delhi", "Mumbai", 5500));
+    flights.add(new Flight(4, "6E404", "Pune", "Delhi", 7500));
+    flights.add(new Flight(5, "SG505", "Mumbai", "Pune", 4000));
+
+    // 1. Display all flight details
+    System.out.println("----- ALL FLIGHTS -----");
+
+    FlightOperation displayAll = flight ->
+            System.out.println(flight);
+
+    for (Flight flight : flights) {
+        displayAll.execute(flight);
+    }
+
+
+    // 2. Display flights whose price is greater than ₹5,000
+    System.out.println("\n----- FLIGHTS ABOVE ₹5000 -----");
+
+    FlightOperation expensiveFlights = flight -> {
+        if (flight.getPrice() > 5000) {
+            System.out.println(flight);
+        }
+    };
+
+    for (Flight flight : flights) {
+        expensiveFlights.execute(flight);
+    }
+
+
+    // 3. Display flights from a particular source
+    System.out.println("\n----- FLIGHTS FROM PUNE -----");
+
+    FlightOperation fromPune = flight -> {
+        if (flight.getSource().equalsIgnoreCase("Pune")) {
+            System.out.println(flight);
+        }
+    };
+
+    for (Flight flight : flights) {
+        fromPune.execute(flight);
+    }
+
+
+    // 4. Display flight number and destination
+    System.out.println("\n----- FLIGHT NUMBER AND DESTINATION -----");
+
+    FlightOperation flightDestination = flight ->
+            System.out.println(
+                    flight.getFlightNumber() +
+                    " -> " +
+                    flight.getDestination()
+            );
+
+    for (Flight flight : flights) {
+        flightDestination.execute(flight);
+    }
+
+
+    // 5. Calculate 10% discount
+    System.out.println("\n----- 10% DISCOUNT -----");
+
+    FlightOperation discount = flight -> {
+        double discountAmount = flight.getPrice() * 0.10;
+        double finalPrice = flight.getPrice() - discountAmount;
+
+        System.out.println(
+                flight.getFlightNumber() +
+                " | Original Price: ₹" + flight.getPrice() +
+                " | Discount: ₹" + discountAmount +
+                " | Final Price: ₹" + finalPrice
+        );
+    };
+
+    for (Flight flight : flights) {
+        discount.execute(flight);
+    }
+}
+
+}

@@ -1,0 +1,178 @@
+import java.util.ArrayList;
+import java.util.List;
+
+public class Assignment3 {
+
+
+public static void main(String[] args) {
+
+    // Create 5 Flight records
+
+    Flight flight1 = new Flight(
+            1, "AI101", "Mumbai", "Delhi", 4500
+    );
+
+    Flight flight2 = new Flight(
+            2, "AI202", "Pune", "Bangalore", 6500
+    );
+
+    Flight flight3 = new Flight(
+            3, "6E303", "Delhi", "Mumbai", 5500
+    );
+
+    Flight flight4 = new Flight(
+            4, "6E404", "Pune", "Delhi", 7500
+    );
+
+    Flight flight5 = new Flight(
+            5, "SG505", "Mumbai", "Pune", 4000
+    );
+
+
+    // Display individual flight information
+
+    System.out.println("----- FLIGHT 1 INFORMATION -----");
+
+    System.out.println("Flight Number: " + flight1.flightNumber());
+    System.out.println("Source: " + flight1.source());
+    System.out.println("Destination: " + flight1.destination());
+    System.out.println("Price: ₹" + flight1.price());
+
+    System.out.println("Complete Information:");
+    System.out.println(flight1);
+
+
+    // Store flights inside a List
+
+    List<Flight> flights = new ArrayList<>();
+
+    flights.add(flight1);
+    flights.add(flight2);
+    flights.add(flight3);
+    flights.add(flight4);
+    flights.add(flight5);
+
+
+    // Display all flights
+
+    System.out.println("\n----- ALL FLIGHTS -----");
+
+    for (Flight flight : flights) {
+        System.out.println(flight);
+    }
+
+
+    // Find flights with price greater than ₹5000
+
+    System.out.println("\n----- FLIGHTS ABOVE ₹5000 -----");
+
+    for (Flight flight : flights) {
+
+        if (flight.price() > 5000) {
+            System.out.println(flight);
+        }
+    }
+
+
+    // Create Passenger records
+
+    Passenger passenger1 = new Passenger(
+            101,
+            "Rahul Sharma",
+            "P1234567"
+    );
+
+    Passenger passenger2 = new Passenger(
+            102,
+            "Priya Patel",
+            "P7654321"
+    );
+
+
+    // Create Booking records
+
+    Booking booking1 = new Booking(
+            1001,
+            flight2,
+            passenger1,
+            2
+    );
+
+    Booking booking2 = new Booking(
+            1002,
+            flight4,
+            passenger2,
+            1
+    );
+
+
+    // Display booking information
+
+    System.out.println("\n----- BOOKING 1 -----");
+
+    System.out.println("Booking ID: " + booking1.bookingId());
+    System.out.println("Passenger: " + booking1.passenger().name());
+    System.out.println(
+            "Passport Number: " +
+            booking1.passenger().passportNumber()
+    );
+    System.out.println(
+            "Flight Number: " +
+            booking1.flight().flightNumber()
+    );
+    System.out.println(
+            "Source: " +
+            booking1.flight().source()
+    );
+    System.out.println(
+            "Destination: " +
+            booking1.flight().destination()
+    );
+    System.out.println(
+            "Flight Price: ₹" +
+            booking1.flight().price()
+    );
+    System.out.println(
+            "Number of Seats: " +
+            booking1.numberOfSeats()
+    );
+
+
+    System.out.println("\n----- BOOKING 2 -----");
+
+    System.out.println("Booking ID: " + booking2.bookingId());
+    System.out.println("Passenger: " + booking2.passenger().name());
+    System.out.println(
+            "Passport Number: " +
+            booking2.passenger().passportNumber()
+    );
+    System.out.println(
+            "Flight Number: " +
+            booking2.flight().flightNumber()
+    );
+    System.out.println(
+            "Source: " +
+            booking2.flight().source()
+    );
+    System.out.println(
+            "Destination: " +
+            booking2.flight().destination()
+    );
+    System.out.println(
+            "Flight Price: ₹" +
+            booking2.flight().price()
+    );
+    System.out.println(
+            "Number of Seats: " +
+            booking2.numberOfSeats()
+    );
+
+
+    // Complete booking information
+
+    System.out.println("\n----- COMPLETE BOOKING OBJECTS -----");
+    System.out.println(booking1);
+    System.out.println(booking2);
+}
+
+}

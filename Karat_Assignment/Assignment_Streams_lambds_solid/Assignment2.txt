@@ -1,0 +1,143 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class Assignment2 {
+public static void main(String[] args) {
+
+    // Variables using var
+
+    var flightNumber = "AI101";
+    var flightPrice = 6500.0;
+    var passengerName = "Rahul";
+    var numberOfSeats = 2;
+    var bookingStatus = "Confirmed";
+
+    // Display variables
+    System.out.println("----- BOOKING INFORMATION -----");
+    System.out.println("Flight Number: " + flightNumber);
+    System.out.println("Flight Price: ₹" + flightPrice);
+    System.out.println("Passenger Name: " + passengerName);
+    System.out.println("Number of Seats: " + numberOfSeats);
+    System.out.println("Booking Status: " + bookingStatus);
+
+
+    // Collection of flights using var
+    var flights = new ArrayList<Flight>();
+
+    flights.add(new Flight(1, "AI101", "Mumbai", "Delhi", 4500));
+    flights.add(new Flight(2, "AI202", "Pune", "Bangalore", 6500));
+    flights.add(new Flight(3, "6E303", "Delhi", "Mumbai", 5500));
+    flights.add(new Flight(4, "6E404", "Pune", "Delhi", 7500));
+    flights.add(new Flight(5, "SG505", "Mumbai", "Pune", 4000));
+
+    System.out.println("\n----- FLIGHTS -----");
+
+    for (var flight : flights) {
+        System.out.println(flight);
+    }
+
+
+    // List of passenger names using var
+    var passengerNames = List.of(
+            "Rahul",
+            "Priya",
+            "Amit",
+            "Sneha"
+    );
+
+    System.out.println("\n----- PASSENGER NAMES -----");
+
+    for (var name : passengerNames) {
+        System.out.println(name);
+    }
+
+
+    // Map containing Flight ID and Flight Number
+    var flightMap = Map.of(
+            1, "AI101",
+            2, "AI202",
+            3, "6E303",
+            4, "6E404",
+            5, "SG505"
+    );
+
+    System.out.println("\n----- FLIGHT MAP -----");
+
+    for (var entry : flightMap.entrySet()) {
+        System.out.println(
+                "Flight ID: " + entry.getKey() +
+                ", Flight Number: " + entry.getValue()
+        );
+    }
+
+
+    // Calculate total ticket price
+    var totalTicketPrice = flightPrice * numberOfSeats;
+
+    // Calculate discount amount
+    var discountAmount = totalTicketPrice * 0.10;
+
+    // Calculate final booking amount
+    var finalBookingAmount = totalTicketPrice - discountAmount;
+
+    System.out.println("\n----- PRICE CALCULATION -----");
+    System.out.println("Ticket Price: ₹" + flightPrice);
+    System.out.println("Number of Seats: " + numberOfSeats);
+    System.out.println("Total Ticket Price: ₹" + totalTicketPrice);
+    System.out.println("Discount Amount: ₹" + discountAmount);
+    System.out.println("Final Booking Amount: ₹" + finalBookingAmount);
+
+
+    // Demonstrating where var CANNOT be used
+
+    /*
+     * 1. Uninitialized local variable:
+     *
+     * var value;
+     * value = 10;
+     *
+     * This is NOT allowed because var needs
+     * an initial value to determine its type.
+     */
+
+
+    /*
+     * 2. Method parameters:
+     *
+     * public void test(var value) {
+     * }
+     *
+     * This is NOT allowed.
+     */
+
+
+    /*
+     * 3. Return types:
+     *
+     * public var getValue() {
+     *     return 10;
+     * }
+     *
+     * This is NOT allowed.
+     */
+
+
+    /*
+     * 4. Instance variables:
+     *
+     * class Test {
+     *     var value = 10;
+     * }
+     *
+     * This is NOT allowed.
+     */
+
+    System.out.println("\nvar cannot be used for:");
+    System.out.println("1. Uninitialized local variables");
+    System.out.println("2. Method parameters");
+    System.out.println("3. Method return types");
+    System.out.println("4. Instance variables");
+}
+
+}

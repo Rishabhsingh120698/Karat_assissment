@@ -1,0 +1,4 @@
+@FunctionalInterface
+public interface FlightOperation {
+void execute(Flight flight);
+}
