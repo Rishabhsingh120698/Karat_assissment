@@ -27,9 +27,13 @@ import java.util.UUID;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+
     private final InventoryClient inventoryClient;
+
     private final ProductClient productClient;
+
     private final PaymentClient paymentClient;
+
     private final NotificationClient notificationClient;
 
     public OrderService(
@@ -59,33 +63,31 @@ public class OrderService {
 
             ProductClient.ProductResponse product =
                     productClient.getProduct(
-                            itemRequest.getProductId()
-                    );
+                            itemRequest.getProductId());
 
             if (product == null) {
+
                 throw new IllegalStateException(
                         "Product not found: "
-                                + itemRequest.getProductId()
-                );
+                                + itemRequest.getProductId());
             }
 
             if (!Boolean.TRUE.equals(product.getActive())) {
+
                 throw new IllegalStateException(
                         "Product is not active: "
-                                + itemRequest.getProductId()
-                );
+                                + itemRequest.getProductId());
             }
 
             InventoryClient.InventoryResponse inventory =
                     inventoryClient.getInventory(
-                            itemRequest.getProductId()
-                    );
+                            itemRequest.getProductId());
 
             if (inventory == null) {
+
                 throw new IllegalStateException(
                         "Inventory not found for product: "
-                                + itemRequest.getProductId()
-                );
+                                + itemRequest.getProductId());
             }
 
             if (inventory.getAvailableQuantity()
@@ -93,8 +95,7 @@ public class OrderService {
 
                 throw new IllegalStateException(
                         "Insufficient stock for product: "
-                                + itemRequest.getProductId()
-                );
+                                + itemRequest.getProductId());
             }
 
             products.add(product);
@@ -105,23 +106,29 @@ public class OrderService {
 
             inventoryClient.reserveStock(
                     itemRequest.getProductId(),
-                    itemRequest.getQuantity()
-            );
+                    itemRequest.getQuantity());
         }
 
         // 3. Create order
         Order order = new Order();
 
         order.setOrderNumber(generateOrderNumber());
+
         order.setUserId(userId);
+
         order.setStatus(OrderStatus.CREATED);
+
         order.setCreatedAt(LocalDateTime.now());
+
         order.setUpdatedAt(LocalDateTime.now());
 
-        BigDecimal totalAmount = BigDecimal.ZERO;
+        BigDecimal totalAmount =
+                BigDecimal.ZERO;
 
         // 4. Create order items
-        for (int i = 0; i < request.getItems().size(); i++) {
+        for (int i = 0;
+             i < request.getItems().size();
+             i++) {
 
             OrderItemRequest itemRequest =
                     request.getItems().get(i);
@@ -129,31 +136,31 @@ public class OrderService {
             ProductClient.ProductResponse product =
                     products.get(i);
 
-            BigDecimal price = product.getPrice();
+            BigDecimal price =
+                    product.getPrice();
 
             BigDecimal subtotal =
                     price.multiply(
                             BigDecimal.valueOf(
-                                    itemRequest.getQuantity()
-                            )
-                    );
+                                    itemRequest.getQuantity()));
 
-            OrderItem orderItem = new OrderItem();
+            OrderItem orderItem =
+                    new OrderItem();
 
             orderItem.setProductId(
-                    itemRequest.getProductId()
-            );
+                    itemRequest.getProductId());
 
             orderItem.setQuantity(
-                    itemRequest.getQuantity()
-            );
+                    itemRequest.getQuantity());
 
             orderItem.setPrice(price);
+
             orderItem.setSubtotal(subtotal);
 
             order.addOrderItem(orderItem);
 
-            totalAmount = totalAmount.add(subtotal);
+            totalAmount =
+                    totalAmount.add(subtotal);
         }
 
         order.setTotalAmount(totalAmount);
@@ -168,22 +175,51 @@ public class OrderService {
                         savedOrder.getId(),
                         userId,
                         totalAmount,
-                        "CREDIT_CARD"
-                );
+                        "CREDIT_CARD");
 
         if (paymentResponse == null
                 || !"SUCCESS".equals(
                         paymentResponse.getStatus())) {
 
-            throw new IllegalStateException(
+            /*
+             * Payment failed.
+             *
+             * Release the inventory that was already reserved.
+             */
+            for (OrderItem orderItem :
+                    savedOrder.getOrderItems()) {
+
+                inventoryClient.releaseStock(
+                        orderItem.getProductId(),
+                        orderItem.getQuantity());
+            }
+
+            savedOrder.setStatus(
+                    OrderStatus.CANCELLED);
+
+            savedOrder.setUpdatedAt(
+                    LocalDateTime.now());
+
+            Order cancelledOrder =
+                    orderRepository.save(savedOrder);
+
+            notificationClient.createNotification(
+                    userId,
+                    cancelledOrder.getId(),
+                    "PAYMENT_FAILED",
                     "Payment failed for order: "
-                            + savedOrder.getOrderNumber()
-            );
+                            + cancelledOrder.getOrderNumber());
+
+            return mapToResponse(
+                    cancelledOrder);
         }
 
         // 7. Confirm order
-        savedOrder.setStatus(OrderStatus.CONFIRMED);
-        savedOrder.setUpdatedAt(LocalDateTime.now());
+        savedOrder.setStatus(
+                OrderStatus.CONFIRMED);
+
+        savedOrder.setUpdatedAt(
+                LocalDateTime.now());
 
         Order confirmedOrder =
                 orderRepository.save(savedOrder);
@@ -198,10 +234,10 @@ public class OrderService {
                 userId,
                 confirmedOrder.getId(),
                 "ORDER_CONFIRMED",
-                notificationMessage
-        );
+                notificationMessage);
 
-        return mapToResponse(confirmedOrder);
+        return mapToResponse(
+                confirmedOrder);
     }
 
     public List<OrderResponse> getOrdersByUser(
@@ -215,20 +251,25 @@ public class OrderService {
     }
 
     public OrderResponse getOrderById(
-            Long id) {
+            Long userId,
+            Long orderId) {
 
         Order order =
-                orderRepository.findById(id)
+                orderRepository.findById(orderId)
                         .orElseThrow(() ->
                                 new OrderNotFoundException(
                                         "Order not found with id: "
-                                                + id
-                                ));
+                                                + orderId));
+
+        validateOrderOwnership(
+                order,
+                userId);
 
         return mapToResponse(order);
     }
 
     public OrderResponse getOrderByNumber(
+            Long userId,
             String orderNumber) {
 
         Order order =
@@ -237,8 +278,11 @@ public class OrderService {
                         .orElseThrow(() ->
                                 new OrderNotFoundException(
                                         "Order not found with order number: "
-                                                + orderNumber
-                                ));
+                                                + orderNumber));
+
+        validateOrderOwnership(
+                order,
+                userId);
 
         return mapToResponse(order);
     }
@@ -254,15 +298,12 @@ public class OrderService {
                         .orElseThrow(() ->
                                 new OrderNotFoundException(
                                         "Order not found with id: "
-                                                + orderId
-                                ));
+                                                + orderId));
 
         // 2. Verify ownership
-        if (!order.getUserId().equals(userId)) {
-            throw new IllegalStateException(
-                    "You are not allowed to cancel this order."
-            );
-        }
+        validateOrderOwnership(
+                order,
+                userId);
 
         // 3. Validate current status
         if (order.getStatus() != OrderStatus.CREATED
@@ -270,8 +311,7 @@ public class OrderService {
 
             throw new IllegalStateException(
                     "Order cannot be cancelled in status: "
-                            + order.getStatus()
-            );
+                            + order.getStatus());
         }
 
         // 4. Release inventory
@@ -280,28 +320,29 @@ public class OrderService {
 
             inventoryClient.releaseStock(
                     orderItem.getProductId(),
-                    orderItem.getQuantity()
-            );
+                    orderItem.getQuantity());
         }
 
         // 5. Find payment for this order
         PaymentClient.PaymentResponse payment =
                 paymentClient.getPaymentByOrderId(
-                        orderId
-                );
+                        orderId);
 
         // 6. Refund payment if successful
         if (payment != null
-                && "SUCCESS".equals(payment.getStatus())) {
+                && "SUCCESS".equals(
+                        payment.getStatus())) {
 
             paymentClient.refundPayment(
-                    payment.getId()
-            );
+                    payment.getId());
         }
 
         // 7. Change order status
-        order.setStatus(OrderStatus.CANCELLED);
-        order.setUpdatedAt(LocalDateTime.now());
+        order.setStatus(
+                OrderStatus.CANCELLED);
+
+        order.setUpdatedAt(
+                LocalDateTime.now());
 
         Order cancelledOrder =
                 orderRepository.save(order);
@@ -316,10 +357,23 @@ public class OrderService {
                 userId,
                 cancelledOrder.getId(),
                 "ORDER_CANCELLED",
-                notificationMessage
-        );
+                notificationMessage);
 
-        return mapToResponse(cancelledOrder);
+        return mapToResponse(
+                cancelledOrder);
+    }
+
+    private void validateOrderOwnership(
+            Order order,
+            Long userId) {
+
+        if (order.getUserId() == null
+                || !order.getUserId().equals(userId)) {
+
+            throw new OrderNotFoundException(
+                    "Order not found with id: "
+                            + order.getId());
+        }
     }
 
     private String generateOrderNumber() {
@@ -337,31 +391,26 @@ public class OrderService {
         OrderResponse response =
                 new OrderResponse();
 
-        response.setId(order.getId());
+        response.setId(
+                order.getId());
 
         response.setOrderNumber(
-                order.getOrderNumber()
-        );
+                order.getOrderNumber());
 
         response.setUserId(
-                order.getUserId()
-        );
+                order.getUserId());
 
         response.setTotalAmount(
-                order.getTotalAmount()
-        );
+                order.getTotalAmount());
 
         response.setStatus(
-                order.getStatus()
-        );
+                order.getStatus());
 
         response.setCreatedAt(
-                order.getCreatedAt()
-        );
+                order.getCreatedAt());
 
         response.setUpdatedAt(
-                order.getUpdatedAt()
-        );
+                order.getUpdatedAt());
 
         List<OrderItemResponse> itemResponses =
                 order.getOrderItems()
@@ -369,7 +418,8 @@ public class OrderService {
                         .map(this::mapItemToResponse)
                         .toList();
 
-        response.setItems(itemResponses);
+        response.setItems(
+                itemResponses);
 
         return response;
     }
@@ -380,23 +430,20 @@ public class OrderService {
         OrderItemResponse response =
                 new OrderItemResponse();
 
-        response.setId(item.getId());
+        response.setId(
+                item.getId());
 
         response.setProductId(
-                item.getProductId()
-        );
+                item.getProductId());
 
         response.setQuantity(
-                item.getQuantity()
-        );
+                item.getQuantity());
 
         response.setPrice(
-                item.getPrice()
-        );
+                item.getPrice());
 
         response.setSubtotal(
-                item.getSubtotal()
-        );
+                item.getSubtotal());
 
         return response;
     }

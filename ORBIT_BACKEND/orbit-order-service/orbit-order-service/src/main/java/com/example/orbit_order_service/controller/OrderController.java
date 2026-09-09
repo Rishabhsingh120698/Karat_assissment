@@ -54,20 +54,22 @@ public class OrderController {
 
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> getOrderById(
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            @RequestHeader("X-USER-ID") Long userId) {
 
         OrderResponse response =
-                orderService.getOrderById(id);
+                orderService.getOrderById(userId, id);
 
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/number/{orderNumber}")
     public ResponseEntity<OrderResponse> getOrderByNumber(
-            @PathVariable String orderNumber) {
+            @PathVariable String orderNumber,
+            @RequestHeader("X-USER-ID") Long userId) {
 
         OrderResponse response =
-                orderService.getOrderByNumber(orderNumber);
+                orderService.getOrderByNumber(userId, orderNumber);
 
         return ResponseEntity.ok(response);
     }
