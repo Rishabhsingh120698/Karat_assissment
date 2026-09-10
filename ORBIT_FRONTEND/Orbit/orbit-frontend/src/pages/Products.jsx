@@ -1,62 +1,126 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getAllProducts } from '../services/productService'
+
+import {
+  getAllProducts
+} from '../services/productService'
+
+import ProductCard from '../components/ProductCard'
 
 function Products() {
-  const [products, setProducts] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+
+  const [products, setProducts] =
+    useState([])
+
+  const [loading, setLoading] =
+    useState(true)
+
+  const [error, setError] =
+    useState('')
 
   useEffect(() => {
+
     getAllProducts()
       .then(data => {
+
         setProducts(data)
+
         setLoading(false)
+
       })
       .catch(error => {
-        setError(error.message)
+
+        console.error(
+          'Failed to load products:',
+          error
+        )
+
+        setError(
+          error.message ||
+          'Failed to load products.'
+        )
+
         setLoading(false)
+
       })
+
   }, [])
 
   if (loading) {
-    return <p>Loading products...</p>
+
+    return (
+      <main className="page-container">
+
+        <h1 className="page-title">
+          Products
+        </h1>
+
+        <p className="loading-message">
+          Loading products...
+        </p>
+
+      </main>
+    )
   }
 
   if (error) {
-    return <p>{error}</p>
+
+    return (
+      <main className="page-container">
+
+        <h1 className="page-title">
+          Products
+        </h1>
+
+        <p className="error-message">
+          {error}
+        </p>
+
+      </main>
+    )
   }
 
   return (
-    <div>
-      <h1>Products</h1>
+    <main className="page-container">
 
-      {products.map(product => (
-        <div key={product.id}>
+      <h1 className="page-title">
+        Explore Our Products
+      </h1>
 
-          <h2>{product.name}</h2>
+      <p className="page-subtitle">
+        Discover quality products at great prices.
+      </p>
 
-          <p>
-            Category: {product.category}
-          </p>
+      {products.length === 0 && (
+        <p className="loading-message">
+          No products available.
+        </p>
+      )}
 
-          <p>
-            Price: ₹{product.price}
-          </p>
+      <div className="product-grid">
 
-          <p>
-            Stock: {product.stockQuantity}
-          </p>
+        {products.map(product => (
 
-          <Link to={`/products/${product.id}`}>
-            View Product
-          </Link>
+          <div key={product.id}>
 
-          <hr />
+            <ProductCard
+              product={product}
+            />
 
-        </div>
-      ))}
-    </div>
+            <Link
+              to={`/products/${product.id}`}
+              className="details-button"
+            >
+              View Product Details
+            </Link>
+
+          </div>
+
+        ))}
+
+      </div>
+
+    </main>
   )
 }
 

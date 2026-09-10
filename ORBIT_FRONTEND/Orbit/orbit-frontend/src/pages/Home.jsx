@@ -1,19 +1,68 @@
+import { Link } from 'react-router-dom'
+
 function Home() {
+
   return (
-    <div>
-      <h1>Project Orbit</h1>
+    <main>
 
-      <h2>Welcome to Project Orbit</h2>
+      <section className="hero-section">
 
-      <p>
-        Your E-Commerce Portal
-      </p>
+        <div className="hero-content">
 
-      <p>
-        Browse products, add them to your cart,
-        and place your order.
-      </p>
-    </div>
+          <h1>
+            Welcome to
+            <br />
+            <span>Project Orbit</span>
+          </h1>
+
+          <p>
+            Your modern e-commerce portal
+            for discovering products,
+            managing your cart, and placing
+            orders with ease.
+          </p>
+
+          <div className="hero-buttons">
+
+            <Link
+              to="/products"
+              className="primary-button"
+            >
+              Explore Products
+            </Link>
+
+            <Link
+              to="/cart"
+              className="secondary-button"
+            >
+              View Cart
+            </Link>
+
+          </div>
+
+        </div>
+
+        <div className="hero-card">
+
+          <h2>
+            Shop. Order. Enjoy.
+          </h2>
+
+          <p>
+            Project Orbit demonstrates a
+            complete modern e-commerce
+            architecture powered by React,
+            Spring Boot microservices,
+            API Gateway, JWT security,
+            inventory, payment and
+            notification services.
+          </p>
+
+        </div>
+
+      </section>
+
+    </main>
   )
 }
 
