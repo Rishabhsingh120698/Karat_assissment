@@ -2,6 +2,7 @@ package com.example.orbit_backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,7 +31,16 @@ public class SecurityConfig {
             throws Exception {
 
         http
+
+            // ------------------------------------
+            // CSRF
+            // ------------------------------------
+
             .csrf(csrf -> csrf.disable())
+
+            // ------------------------------------
+            // SESSION MANAGEMENT
+            // ------------------------------------
 
             .sessionManagement(session ->
                     session.sessionCreationPolicy(
@@ -38,61 +48,85 @@ public class SecurityConfig {
                     )
             )
 
+            // ------------------------------------
+            // DISABLE BASIC AUTHENTICATION
+            // ------------------------------------
+
+            .httpBasic(httpBasic ->
+                    httpBasic.disable()
+            )
+
+            // ------------------------------------
+            // DISABLE FORM LOGIN
+            // ------------------------------------
+
+            .formLogin(formLogin ->
+                    formLogin.disable()
+            )
+
+            // ------------------------------------
+            // AUTHORIZATION RULES
+            // ------------------------------------
+
             .authorizeHttpRequests(auth -> auth
 
-                // ------------------------------------
-                // PUBLIC APIs
-                // ------------------------------------
+                // --------------------------------
+                // PUBLIC AUTH APIs
+                // --------------------------------
 
-                // Registration
-                .requestMatchers("/api/auth/register")
-                .permitAll()
-
-                // Login
-                .requestMatchers("/api/auth/login")
-                .permitAll()
-
-                // Product GET APIs
                 .requestMatchers(
-                        org.springframework.http.HttpMethod.GET,
+                        "/api/auth/register"
+                )
+                .permitAll()
+
+                .requestMatchers(
+                        "/api/auth/login"
+                )
+                .permitAll()
+
+                // --------------------------------
+                // PUBLIC PRODUCT GET APIs
+                // --------------------------------
+
+                .requestMatchers(
+                        HttpMethod.GET,
                         "/api/products",
                         "/api/products/**"
                 )
                 .permitAll()
 
-                // ------------------------------------
-                // ADMIN APIs
-                // ------------------------------------
+                // --------------------------------
+                // ADMIN PRODUCT APIs
+                // --------------------------------
 
-                // Create product
                 .requestMatchers(
-                        org.springframework.http.HttpMethod.POST,
+                        HttpMethod.POST,
                         "/api/products"
                 )
                 .hasRole("ADMIN")
 
-                // Update product
                 .requestMatchers(
-                        org.springframework.http.HttpMethod.PUT,
+                        HttpMethod.PUT,
                         "/api/products/**"
                 )
                 .hasRole("ADMIN")
 
-                // Delete product
                 .requestMatchers(
-                        org.springframework.http.HttpMethod.DELETE,
+                        HttpMethod.DELETE,
                         "/api/products/**"
                 )
                 .hasRole("ADMIN")
 
-                // Activate / deactivate product
                 .requestMatchers(
-                        org.springframework.http.HttpMethod.PATCH,
+                        HttpMethod.PATCH,
                         "/api/products/**"
                 )
                 .hasRole("ADMIN")
 
-                // Everything else requires authentication
+                // --------------------------------
+                // EVERYTHING ELSE
+                // --------------------------------
+
                 .anyRequest()
                 .authenticated()
             )

@@ -4,7 +4,13 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.orbit_inventory_service.dto.InventoryRequest;
 import com.example.orbit_inventory_service.dto.InventoryResponse;
@@ -19,7 +25,9 @@ public class InventoryController {
 
     private final InventoryService inventoryService;
 
-    public InventoryController(InventoryService inventoryService) {
+    public InventoryController(
+            InventoryService inventoryService) {
+
         this.inventoryService = inventoryService;
     }
 
@@ -36,71 +44,90 @@ public class InventoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<InventoryResponse>> getAllInventory() {
+    public ResponseEntity<List<InventoryResponse>>
+            getAllInventory() {
 
         return ResponseEntity.ok(
-                inventoryService.getAllInventory()
-        );
+                inventoryService.getAllInventory());
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<InventoryResponse> getInventory(
-            @PathVariable Long productId) {
+    public ResponseEntity<InventoryResponse>
+            getInventoryByProductId(
+                    @PathVariable Long productId) {
 
         return ResponseEntity.ok(
-                inventoryService.getInventoryByProductId(productId)
-        );
+                inventoryService
+                        .getInventoryByProductId(productId));
     }
 
     @PatchMapping("/{productId}/increase")
-    public ResponseEntity<InventoryResponse> increaseStock(
-            @PathVariable Long productId,
-            @Valid @RequestBody StockUpdateRequest request) {
+    public ResponseEntity<InventoryResponse>
+            increaseStock(
+                    @PathVariable Long productId,
+                    @Valid @RequestBody
+                    StockUpdateRequest request) {
 
         return ResponseEntity.ok(
-                inventoryService.increaseStock(
-                        productId,
-                        request
-                )
-        );
+                inventoryService
+                        .increaseStock(
+                                productId,
+                                request));
     }
 
     @PatchMapping("/{productId}/decrease")
-    public ResponseEntity<InventoryResponse> decreaseStock(
-            @PathVariable Long productId,
-            @Valid @RequestBody StockUpdateRequest request) {
+    public ResponseEntity<InventoryResponse>
+            decreaseStock(
+                    @PathVariable Long productId,
+                    @Valid @RequestBody
+                    StockUpdateRequest request) {
 
         return ResponseEntity.ok(
-                inventoryService.decreaseStock(
-                        productId,
-                        request
-                )
-        );
+                inventoryService
+                        .decreaseStock(
+                                productId,
+                                request));
     }
 
     @PatchMapping("/{productId}/reserve")
-    public ResponseEntity<InventoryResponse> reserveStock(
-            @PathVariable Long productId,
-            @Valid @RequestBody StockUpdateRequest request) {
+    public ResponseEntity<InventoryResponse>
+            reserveStock(
+                    @PathVariable Long productId,
+                    @Valid @RequestBody
+                    StockUpdateRequest request) {
 
         return ResponseEntity.ok(
-                inventoryService.reserveStock(
-                        productId,
-                        request
-                )
-        );
+                inventoryService
+                        .reserveStock(
+                                productId,
+                                request));
     }
 
     @PatchMapping("/{productId}/release")
-    public ResponseEntity<InventoryResponse> releaseStock(
-            @PathVariable Long productId,
-            @Valid @RequestBody StockUpdateRequest request) {
+    public ResponseEntity<InventoryResponse>
+            releaseStock(
+                    @PathVariable Long productId,
+                    @Valid @RequestBody
+                    StockUpdateRequest request) {
 
         return ResponseEntity.ok(
-                inventoryService.releaseStock(
-                        productId,
-                        request
-                )
-        );
+                inventoryService
+                        .releaseStock(
+                                productId,
+                                request));
+    }
+
+    @PatchMapping("/{productId}/finalize")
+    public ResponseEntity<InventoryResponse>
+            finalizeStock(
+                    @PathVariable Long productId,
+                    @Valid @RequestBody
+                    StockUpdateRequest request) {
+
+        return ResponseEntity.ok(
+                inventoryService
+                        .finalizeStock(
+                                productId,
+                                request));
     }
 }

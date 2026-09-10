@@ -44,10 +44,15 @@ public class OrderService {
             NotificationClient notificationClient) {
 
         this.orderRepository = orderRepository;
+
         this.inventoryClient = inventoryClient;
+
         this.productClient = productClient;
+
         this.paymentClient = paymentClient;
-        this.notificationClient = notificationClient;
+
+        this.notificationClient =
+                notificationClient;
     }
 
     @Transactional
@@ -59,7 +64,9 @@ public class OrderService {
                 new ArrayList<>();
 
         // 1. Validate products and inventory
-        for (OrderItemRequest itemRequest : request.getItems()) {
+
+        for (OrderItemRequest itemRequest :
+                request.getItems()) {
 
             ProductClient.ProductResponse product =
                     productClient.getProduct(
@@ -72,7 +79,8 @@ public class OrderService {
                                 + itemRequest.getProductId());
             }
 
-            if (!Boolean.TRUE.equals(product.getActive())) {
+            if (!Boolean.TRUE.equals(
+                    product.getActive())) {
 
                 throw new IllegalStateException(
                         "Product is not active: "
@@ -102,7 +110,9 @@ public class OrderService {
         }
 
         // 2. Reserve inventory
-        for (OrderItemRequest itemRequest : request.getItems()) {
+
+        for (OrderItemRequest itemRequest :
+                request.getItems()) {
 
             inventoryClient.reserveStock(
                     itemRequest.getProductId(),
@@ -110,22 +120,28 @@ public class OrderService {
         }
 
         // 3. Create order
+
         Order order = new Order();
 
-        order.setOrderNumber(generateOrderNumber());
+        order.setOrderNumber(
+                generateOrderNumber());
 
         order.setUserId(userId);
 
-        order.setStatus(OrderStatus.CREATED);
+        order.setStatus(
+                OrderStatus.CREATED);
 
-        order.setCreatedAt(LocalDateTime.now());
+        order.setCreatedAt(
+                LocalDateTime.now());
 
-        order.setUpdatedAt(LocalDateTime.now());
+        order.setUpdatedAt(
+                LocalDateTime.now());
 
         BigDecimal totalAmount =
                 BigDecimal.ZERO;
 
         // 4. Create order items
+
         for (int i = 0;
              i < request.getItems().size();
              i++) {
@@ -163,13 +179,16 @@ public class OrderService {
                     totalAmount.add(subtotal);
         }
 
-        order.setTotalAmount(totalAmount);
+        order.setTotalAmount(
+                totalAmount);
 
         // 5. Save order
+
         Order savedOrder =
                 orderRepository.save(order);
 
         // 6. Process payment
+
         PaymentClient.PaymentResponse paymentResponse =
                 paymentClient.createPayment(
                         savedOrder.getId(),
@@ -184,8 +203,10 @@ public class OrderService {
             /*
              * Payment failed.
              *
-             * Release the inventory that was already reserved.
+             * Release the inventory that
+             * was already reserved.
              */
+
             for (OrderItem orderItem :
                     savedOrder.getOrderItems()) {
 
@@ -201,20 +222,45 @@ public class OrderService {
                     LocalDateTime.now());
 
             Order cancelledOrder =
-                    orderRepository.save(savedOrder);
+                    orderRepository.save(
+                            savedOrder);
 
             notificationClient.createNotification(
                     userId,
                     cancelledOrder.getId(),
                     "PAYMENT_FAILED",
                     "Payment failed for order: "
-                            + cancelledOrder.getOrderNumber());
+                            + cancelledOrder
+                                    .getOrderNumber());
 
             return mapToResponse(
                     cancelledOrder);
         }
 
-        // 7. Confirm order
+        // 7. Payment succeeded.
+        //
+        // Finalize the reserved inventory.
+        //
+        // Example:
+        //
+        // stock = 20
+        // reserved = 2
+        //
+        // after finalize:
+        //
+        // stock = 18
+        // reserved = 0
+
+        for (OrderItem orderItem :
+                savedOrder.getOrderItems()) {
+
+            inventoryClient.finalizeStock(
+                    orderItem.getProductId(),
+                    orderItem.getQuantity());
+        }
+
+        // 8. Confirm order
+
         savedOrder.setStatus(
                 OrderStatus.CONFIRMED);
 
@@ -222,12 +268,15 @@ public class OrderService {
                 LocalDateTime.now());
 
         Order confirmedOrder =
-                orderRepository.save(savedOrder);
+                orderRepository.save(
+                        savedOrder);
 
-        // 8. Create confirmation notification
+        // 9. Create confirmation notification
+
         String notificationMessage =
                 "Your order "
-                        + confirmedOrder.getOrderNumber()
+                        + confirmedOrder
+                                .getOrderNumber()
                         + " has been confirmed successfully.";
 
         notificationClient.createNotification(
@@ -274,7 +323,8 @@ public class OrderService {
 
         Order order =
                 orderRepository
-                        .findByOrderNumber(orderNumber)
+                        .findByOrderNumber(
+                                orderNumber)
                         .orElseThrow(() ->
                                 new OrderNotFoundException(
                                         "Order not found with order number: "
@@ -293,6 +343,7 @@ public class OrderService {
             Long orderId) {
 
         // 1. Find order
+
         Order order =
                 orderRepository.findById(orderId)
                         .orElseThrow(() ->
@@ -301,13 +352,17 @@ public class OrderService {
                                                 + orderId));
 
         // 2. Verify ownership
+
         validateOrderOwnership(
                 order,
                 userId);
 
         // 3. Validate current status
-        if (order.getStatus() != OrderStatus.CREATED
-                && order.getStatus() != OrderStatus.CONFIRMED) {
+
+        if (order.getStatus()
+                        != OrderStatus.CREATED
+                && order.getStatus()
+                        != OrderStatus.CONFIRMED) {
 
             throw new IllegalStateException(
                     "Order cannot be cancelled in status: "
@@ -315,6 +370,7 @@ public class OrderService {
         }
 
         // 4. Release inventory
+
         for (OrderItem orderItem :
                 order.getOrderItems()) {
 
@@ -324,11 +380,13 @@ public class OrderService {
         }
 
         // 5. Find payment for this order
+
         PaymentClient.PaymentResponse payment =
                 paymentClient.getPaymentByOrderId(
                         orderId);
 
         // 6. Refund payment if successful
+
         if (payment != null
                 && "SUCCESS".equals(
                         payment.getStatus())) {
@@ -338,6 +396,7 @@ public class OrderService {
         }
 
         // 7. Change order status
+
         order.setStatus(
                 OrderStatus.CANCELLED);
 
@@ -348,9 +407,11 @@ public class OrderService {
                 orderRepository.save(order);
 
         // 8. Create cancellation notification
+
         String notificationMessage =
                 "Your order "
-                        + cancelledOrder.getOrderNumber()
+                        + cancelledOrder
+                                .getOrderNumber()
                         + " has been cancelled successfully.";
 
         notificationClient.createNotification(
@@ -368,7 +429,8 @@ public class OrderService {
             Long userId) {
 
         if (order.getUserId() == null
-                || !order.getUserId().equals(userId)) {
+                || !order.getUserId()
+                        .equals(userId)) {
 
             throw new OrderNotFoundException(
                     "Order not found with id: "

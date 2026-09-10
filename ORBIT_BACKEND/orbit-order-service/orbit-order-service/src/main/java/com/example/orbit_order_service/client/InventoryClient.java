@@ -9,6 +9,7 @@ public class InventoryClient {
     private final RestClient restClient;
 
     public InventoryClient() {
+
         this.restClient = RestClient.builder()
                 .baseUrl("http://localhost:8083")
                 .build();
@@ -17,12 +18,17 @@ public class InventoryClient {
     public InventoryResponse getInventory(Long productId) {
 
         return restClient.get()
-                .uri("/api/inventory/{productId}", productId)
+                .uri(
+                        "/api/inventory/{productId}",
+                        productId
+                )
                 .retrieve()
                 .body(InventoryResponse.class);
     }
 
-    public void reserveStock(Long productId, Integer quantity) {
+    public void reserveStock(
+            Long productId,
+            Integer quantity) {
 
         StockUpdateRequest request =
                 new StockUpdateRequest();
@@ -30,13 +36,18 @@ public class InventoryClient {
         request.setQuantity(quantity);
 
         restClient.patch()
-                .uri("/api/inventory/{productId}/reserve", productId)
+                .uri(
+                        "/api/inventory/{productId}/reserve",
+                        productId
+                )
                 .body(request)
                 .retrieve()
                 .toBodilessEntity();
     }
 
-    public void releaseStock(Long productId, Integer quantity) {
+    public void releaseStock(
+            Long productId,
+            Integer quantity) {
 
         StockUpdateRequest request =
                 new StockUpdateRequest();
@@ -44,7 +55,29 @@ public class InventoryClient {
         request.setQuantity(quantity);
 
         restClient.patch()
-                .uri("/api/inventory/{productId}/release", productId)
+                .uri(
+                        "/api/inventory/{productId}/release",
+                        productId
+                )
+                .body(request)
+                .retrieve()
+                .toBodilessEntity();
+    }
+
+    public void finalizeStock(
+            Long productId,
+            Integer quantity) {
+
+        StockUpdateRequest request =
+                new StockUpdateRequest();
+
+        request.setQuantity(quantity);
+
+        restClient.patch()
+                .uri(
+                        "/api/inventory/{productId}/finalize",
+                        productId
+                )
                 .body(request)
                 .retrieve()
                 .toBodilessEntity();
@@ -69,9 +102,13 @@ public class InventoryClient {
     public static class InventoryResponse {
 
         private Long id;
+
         private Long productId;
+
         private Integer stockQuantity;
+
         private Integer reservedQuantity;
+
         private Integer availableQuantity;
 
         public InventoryResponse() {
@@ -97,7 +134,9 @@ public class InventoryClient {
             return stockQuantity;
         }
 
-        public void setStockQuantity(Integer stockQuantity) {
+        public void setStockQuantity(
+                Integer stockQuantity) {
+
             this.stockQuantity = stockQuantity;
         }
 
@@ -105,16 +144,22 @@ public class InventoryClient {
             return reservedQuantity;
         }
 
-        public void setReservedQuantity(Integer reservedQuantity) {
-            this.reservedQuantity = reservedQuantity;
+        public void setReservedQuantity(
+                Integer reservedQuantity) {
+
+            this.reservedQuantity =
+                    reservedQuantity;
         }
 
         public Integer getAvailableQuantity() {
             return availableQuantity;
         }
 
-        public void setAvailableQuantity(Integer availableQuantity) {
-            this.availableQuantity = availableQuantity;
+        public void setAvailableQuantity(
+                Integer availableQuantity) {
+
+            this.availableQuantity =
+                    availableQuantity;
         }
     }
 }
