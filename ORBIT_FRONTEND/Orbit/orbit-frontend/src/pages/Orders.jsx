@@ -91,27 +91,40 @@ function Orders() {
   if (loading) {
 
     return (
-      <main className="page-container">
+      <main className="orders-page">
 
-        <div className="orders-page-header">
+        <div className="orders-container">
 
-          <div>
-            <h1 className="page-title">
-              My Orders
-            </h1>
+          <div className="orders-page-header">
 
-            <p className="page-subtitle">
-              View and manage your orders.
-            </p>
+            <div>
+
+              <span className="orders-page-label">
+                PROJECT ORBIT
+              </span>
+
+              <h1 className="page-title">
+                My Orders
+              </h1>
+
+              <p className="page-subtitle">
+                View and manage your orders.
+              </p>
+
+            </div>
+
           </div>
 
-        </div>
+          <div className="orders-loading-card">
 
-        <div className="loading-card">
-          <div className="loading-spinner" />
-          <p>
-            Loading your orders...
-          </p>
+            <div className="loading-spinner" />
+
+            <p>
+              Loading your orders...
+            </p>
+
+          </div>
+
         </div>
 
       </main>
@@ -121,35 +134,45 @@ function Orders() {
   if (error) {
 
     return (
-      <main className="page-container">
+      <main className="orders-page">
 
-        <div className="orders-page-header">
+        <div className="orders-container">
 
-          <div>
-            <h1 className="page-title">
-              My Orders
-            </h1>
+          <div className="orders-page-header">
 
-            <p className="page-subtitle">
-              View and manage your orders.
+            <div>
+
+              <span className="orders-page-label">
+                PROJECT ORBIT
+              </span>
+
+              <h1 className="page-title">
+                My Orders
+              </h1>
+
+              <p className="page-subtitle">
+                View and manage your orders.
+              </p>
+
+            </div>
+
+          </div>
+
+          <div className="orders-error-card">
+
+            <div className="orders-error-icon">
+              !
+            </div>
+
+            <h2>
+              Unable to Load Orders
+            </h2>
+
+            <p>
+              {error}
             </p>
+
           </div>
-
-        </div>
-
-        <div className="orders-error-card">
-
-          <div className="orders-error-icon">
-            !
-          </div>
-
-          <h2>
-            Unable to Load Orders
-          </h2>
-
-          <p>
-            {error}
-          </p>
 
         </div>
 
@@ -158,171 +181,218 @@ function Orders() {
   }
 
   return (
-    <main className="page-container">
+    <main className="orders-page">
 
-      <div className="orders-page-header">
+      <div className="orders-container">
 
-        <div>
+        <div className="orders-page-header">
 
-          <h1 className="page-title">
-            My Orders
-          </h1>
+          <div>
 
-          <p className="page-subtitle">
-            View and manage your orders.
-          </p>
+            <span className="orders-page-label">
+              PROJECT ORBIT
+            </span>
 
-        </div>
+            <h1 className="page-title">
+              My Orders
+            </h1>
 
-        <div className="orders-count">
+            <p className="page-subtitle">
+              View and manage your orders.
+            </p>
 
-          <strong>
-            {orders.length}
-          </strong>
-
-          <span>
-            {orders.length === 1
-              ? 'Order'
-              : 'Orders'}
-          </span>
-
-        </div>
-
-      </div>
-
-      {orders.length === 0 && (
-
-        <div className="empty-orders-card">
-
-          <div className="empty-orders-icon">
-            📦
           </div>
 
-          <h2>
-            No Orders Yet
-          </h2>
+          <div className="orders-count">
 
-          <p>
-            You haven't placed any orders yet.
-          </p>
+            <strong>
+              {orders.length}
+            </strong>
 
-          <Link
-            to="/products"
-            className="primary-button"
-          >
-            Start Shopping
-          </Link>
+            <span>
+              {orders.length === 1
+                ? 'Order'
+                : 'Orders'}
+            </span>
+
+          </div>
 
         </div>
 
-      )}
+        {orders.length === 0 && (
 
-      {orders.length > 0 && (
+          <div className="empty-orders-card">
 
-        <div className="orders-grid">
+            <div className="empty-orders-icon">
+              📦
+            </div>
 
-          {orders.map(order => (
+            <span className="orders-empty-label">
+              YOUR ORDER HISTORY
+            </span>
 
-            <article
-              className="order-card"
-              key={order.id}
+            <h2>
+              No Orders Yet
+            </h2>
+
+            <p>
+              You haven't placed any orders yet.
+              Start exploring our products and
+              your orders will appear here.
+            </p>
+
+            <Link
+              to="/products"
+              className="primary-button"
             >
+              Start Shopping →
+            </Link>
 
-              <div className="order-card-header">
+          </div>
 
-                <div>
+        )}
 
-                  <span className="order-label">
-                    ORDER
-                  </span>
+        {orders.length > 0 && (
 
-                  <h2>
-                    #{order.orderNumber}
-                  </h2>
+          <div className="orders-content">
 
-                </div>
+            <div className="orders-section-heading">
 
-                <span
-                  className={
-                    `status-badge ${
-                      getStatusClass(
-                        order.status
-                      )
-                    }`
-                  }
-                >
-                  {order.status}
+              <div>
+
+                <span>
+                  ORDER HISTORY
                 </span>
 
-              </div>
-
-              <div className="order-card-divider" />
-
-              <div className="order-info-grid">
-
-                <div className="order-info-item">
-
-                  <span>
-                    Order ID
-                  </span>
-
-                  <strong>
-                    #{order.id}
-                  </strong>
-
-                </div>
-
-                <div className="order-info-item">
-
-                  <span>
-                    Total Amount
-                  </span>
-
-                  <strong>
-                    ₹{Number(
-                      order.totalAmount
-                    ).toFixed(2)}
-                  </strong>
-
-                </div>
-
-                <div className="order-info-item">
-
-                  <span>
-                    Created
-                  </span>
-
-                  <strong>
-                    {formatDate(
-                      order.createdAt
-                    )}
-                  </strong>
-
-                </div>
+                <h2>
+                  Your Recent Orders
+                </h2>
 
               </div>
 
-              <div className="order-card-footer">
+              <Link
+                to="/products"
+                className="orders-shop-link"
+              >
+                Continue Shopping →
+              </Link>
 
-                <Link
-                  to={`/orders/${order.id}`}
-                  className="view-order-button"
+            </div>
+
+            <div className="orders-grid">
+
+              {orders.map(order => (
+
+                <article
+                  className="order-card"
+                  key={order.id}
                 >
-                  View Order Details
-                  <span>
-                    →
-                  </span>
-                </Link>
 
-              </div>
+                  <div className="order-card-header">
 
-            </article>
+                    <div>
 
-          ))}
+                      <span className="order-label">
+                        ORDER
+                      </span>
 
-        </div>
+                      <h2>
+                        #{order.orderNumber}
+                      </h2>
 
-      )}
+                    </div>
+
+                    <span
+                      className={
+                        `status-badge ${
+                          getStatusClass(
+                            order.status
+                          )
+                        }`
+                      }
+                    >
+                      {order.status}
+                    </span>
+
+                  </div>
+
+                  <div className="order-card-divider" />
+
+                  <div className="order-info-grid">
+
+                    <div className="order-info-item">
+
+                      <span>
+                        Order ID
+                      </span>
+
+                      <strong>
+                        #{order.id}
+                      </strong>
+
+                    </div>
+
+                    <div className="order-info-item">
+
+                      <span>
+                        Total Amount
+                      </span>
+
+                      <strong className="order-amount">
+                        ₹{Number(
+                          order.totalAmount
+                        ).toLocaleString(
+                          'en-IN',
+                          {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                          }
+                        )}
+                      </strong>
+
+                    </div>
+
+                    <div className="order-info-item order-created-item">
+
+                      <span>
+                        Created
+                      </span>
+
+                      <strong>
+                        {formatDate(
+                          order.createdAt
+                        )}
+                      </strong>
+
+                    </div>
+
+                  </div>
+
+                  <div className="order-card-footer">
+
+                    <Link
+                      to={`/orders/${order.id}`}
+                      className="view-order-button"
+                    >
+                      View Order Details
+                      <span>
+                        →
+                      </span>
+                    </Link>
+
+                  </div>
+
+                </article>
+
+              ))}
+
+            </div>
+
+          </div>
+
+        )}
+
+      </div>
 
     </main>
   )

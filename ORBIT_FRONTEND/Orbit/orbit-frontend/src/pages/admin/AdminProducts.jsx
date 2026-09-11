@@ -55,6 +55,7 @@ function AdminProducts() {
       active: true
     })
 
+
   const loadProducts = async () => {
 
     try {
@@ -91,11 +92,13 @@ function AdminProducts() {
     }
   }
 
+
   useEffect(() => {
 
     loadProducts()
 
   }, [])
+
 
   const handleInputChange = (event) => {
 
@@ -117,6 +120,7 @@ function AdminProducts() {
     )
   }
 
+
   const resetForm = () => {
 
     setFormData({
@@ -132,8 +136,8 @@ function AdminProducts() {
     setEditingProductId(null)
     setFormError('')
     setFormSuccess('')
-
   }
+
 
   const handleOpenAddForm = () => {
 
@@ -142,6 +146,7 @@ function AdminProducts() {
     setShowProductForm(true)
 
   }
+
 
   const handleOpenEditForm = (product) => {
 
@@ -181,6 +186,7 @@ function AdminProducts() {
     })
   }
 
+
   const handleCloseProductForm = () => {
 
     if (formLoading) {
@@ -192,6 +198,7 @@ function AdminProducts() {
     resetForm()
 
   }
+
 
   const validateForm = () => {
 
@@ -206,6 +213,7 @@ function AdminProducts() {
       return false
     }
 
+
     if (
       formData.description.trim() === ''
     ) {
@@ -216,6 +224,7 @@ function AdminProducts() {
 
       return false
     }
+
 
     if (
       formData.price === '' ||
@@ -229,6 +238,7 @@ function AdminProducts() {
       return false
     }
 
+
     if (
       formData.category.trim() === ''
     ) {
@@ -239,6 +249,7 @@ function AdminProducts() {
 
       return false
     }
+
 
     if (
       formData.stockQuantity === '' ||
@@ -255,6 +266,7 @@ function AdminProducts() {
     return true
   }
 
+
   const handleProductSubmit = async (event) => {
 
     event.preventDefault()
@@ -268,6 +280,7 @@ function AdminProducts() {
     if (!isValid) {
       return
     }
+
 
     const productRequest = {
 
@@ -292,6 +305,7 @@ function AdminProducts() {
       active:
         formData.active
     }
+
 
     try {
 
@@ -361,6 +375,7 @@ function AdminProducts() {
     }
   }
 
+
   const handleToggleProductStatus = async (product) => {
 
     setStatusError('')
@@ -426,6 +441,30 @@ function AdminProducts() {
     }
   }
 
+
+  const activeProducts =
+    products.filter(
+      product =>
+        product.active === true
+    ).length
+
+
+  const inactiveProducts =
+    products.filter(
+      product =>
+        product.active === false
+    ).length
+
+
+  const totalStock =
+    products.reduce(
+      (total, product) =>
+        total +
+        Number(product.stockQuantity || 0),
+      0
+    )
+
+
   if (loading) {
 
     return (
@@ -433,12 +472,12 @@ function AdminProducts() {
 
         <div className="admin-products-container">
 
-          <div className="loading-container">
+          <div className="admin-page-loading">
 
-            <div className="loading-spinner" />
+            <div className="admin-loading-spinner" />
 
             <p>
-              Loading products...
+              Loading product catalog...
             </p>
 
           </div>
@@ -449,6 +488,7 @@ function AdminProducts() {
     )
   }
 
+
   if (error) {
 
     return (
@@ -456,7 +496,11 @@ function AdminProducts() {
 
         <div className="admin-products-container">
 
-          <div className="error-container">
+          <div className="admin-page-error">
+
+            <div className="admin-error-icon">
+              !
+            </div>
 
             <h2>
               Unable to load products
@@ -468,7 +512,7 @@ function AdminProducts() {
 
             <Link
               to="/admin"
-              className="back-link"
+              className="admin-back-link"
             >
               ← Back to Admin Dashboard
             </Link>
@@ -481,24 +525,29 @@ function AdminProducts() {
     )
   }
 
+
   return (
+
     <main className="admin-products-page">
 
       <div className="admin-products-container">
 
+
+        {/* HEADER */}
+
         <div className="admin-products-header">
 
-          <div>
+          <div className="admin-products-header-content">
 
             <Link
               to="/admin"
-              className="back-link"
+              className="admin-back-link"
             >
               ← Back to Admin Dashboard
             </Link>
 
             <span className="admin-products-label">
-              ADMINISTRATION
+              PROJECT ORBIT • CATALOG
             </span>
 
             <h1>
@@ -506,43 +555,57 @@ function AdminProducts() {
             </h1>
 
             <p>
-              View and manage all products in
-              the Project Orbit catalog.
+              Manage your product catalog,
+              pricing, inventory and availability.
             </p>
 
           </div>
 
+
           <button
             type="button"
-            className="admin-primary-button"
+            className="admin-primary-button admin-add-product-button"
             onClick={handleOpenAddForm}
           >
-            + Add Product
+            <span className="admin-button-icon">
+              +
+            </span>
+
+            Add Product
           </button>
 
         </div>
 
+
+        {/* STATUS MESSAGES */}
+
         {statusError && (
 
           <div
-            className="admin-form-error"
+            className="admin-form-error admin-status-message"
             role="alert"
           >
+            <span>!</span>
             {statusError}
           </div>
 
         )}
 
+
         {statusSuccess && (
 
           <div
-            className="admin-form-success"
+            className="admin-form-success admin-status-message"
             role="status"
           >
+            <span>✓</span>
             {statusSuccess}
           </div>
 
         )}
+
+
+        {/* ADD / EDIT FORM */}
 
         {showProductForm && (
 
@@ -581,6 +644,7 @@ function AdminProducts() {
 
               </div>
 
+
               <button
                 type="button"
                 className="admin-form-close-button"
@@ -592,16 +656,19 @@ function AdminProducts() {
 
             </div>
 
+
             {formError && (
 
               <div
                 className="admin-form-error"
                 role="alert"
               >
+                <span>!</span>
                 {formError}
               </div>
 
             )}
+
 
             {formSuccess && (
 
@@ -609,10 +676,12 @@ function AdminProducts() {
                 className="admin-form-success"
                 role="status"
               >
+                <span>✓</span>
                 {formSuccess}
               </div>
 
             )}
+
 
             <form
               className="admin-product-form"
@@ -620,6 +689,7 @@ function AdminProducts() {
             >
 
               <div className="admin-form-grid">
+
 
                 <div className="admin-form-field">
 
@@ -639,6 +709,7 @@ function AdminProducts() {
 
                 </div>
 
+
                 <div className="admin-form-field">
 
                   <label htmlFor="product-category">
@@ -657,25 +728,35 @@ function AdminProducts() {
 
                 </div>
 
+
                 <div className="admin-form-field">
 
                   <label htmlFor="product-price">
                     Price
                   </label>
 
-                  <input
-                    id="product-price"
-                    name="price"
-                    type="number"
-                    min="0.01"
-                    step="0.01"
-                    value={formData.price}
-                    onChange={handleInputChange}
-                    placeholder="69999.99"
-                    disabled={formLoading}
-                  />
+                  <div className="admin-input-prefix">
+
+                    <span>
+                      ₹
+                    </span>
+
+                    <input
+                      id="product-price"
+                      name="price"
+                      type="number"
+                      min="0.01"
+                      step="0.01"
+                      value={formData.price}
+                      onChange={handleInputChange}
+                      placeholder="69999.99"
+                      disabled={formLoading}
+                    />
+
+                  </div>
 
                 </div>
+
 
                 <div className="admin-form-field">
 
@@ -697,6 +778,7 @@ function AdminProducts() {
 
                 </div>
 
+
                 <div className="admin-form-field admin-form-field-full">
 
                   <label htmlFor="product-description">
@@ -715,10 +797,11 @@ function AdminProducts() {
 
                 </div>
 
+
                 <div className="admin-form-field admin-form-field-full">
 
                   <label htmlFor="product-image-url">
-                    Image URL
+                    Product Image URL
                   </label>
 
                   <input
@@ -731,7 +814,35 @@ function AdminProducts() {
                     disabled={formLoading}
                   />
 
+                  <span className="admin-field-help">
+                    Add a public image URL to display the
+                    product image in the catalog.
+                  </span>
+
                 </div>
+
+
+                {formData.imageUrl && (
+
+                  <div className="admin-image-preview">
+
+                    <span>
+                      IMAGE PREVIEW
+                    </span>
+
+                    <img
+                      src={formData.imageUrl}
+                      alt="Product preview"
+                      onError={(event) => {
+                        event.currentTarget.style.display =
+                          'none'
+                      }}
+                    />
+
+                  </div>
+
+                )}
+
 
                 <div className="admin-form-checkbox">
 
@@ -745,12 +856,22 @@ function AdminProducts() {
                   />
 
                   <label htmlFor="product-active">
-                    Product is active
+
+                    <strong>
+                      Product is active
+                    </strong>
+
+                    <span>
+                      Active products are available
+                      in the customer catalog.
+                    </span>
+
                   </label>
 
                 </div>
 
               </div>
+
 
               <div className="admin-form-actions">
 
@@ -762,6 +883,7 @@ function AdminProducts() {
                 >
                   Cancel
                 </button>
+
 
                 <button
                   type="submit"
@@ -788,55 +910,99 @@ function AdminProducts() {
 
         )}
 
+
+        {/* SUMMARY */}
+
         <div className="admin-products-summary">
 
+
           <div className="admin-summary-card">
 
-            <span className="admin-summary-label">
-              Total Products
-            </span>
+            <div className="admin-summary-icon">
+              ◈
+            </div>
 
-            <strong>
-              {products.length}
-            </strong>
+            <div>
+
+              <span className="admin-summary-label">
+                Total Products
+              </span>
+
+              <strong>
+                {products.length}
+              </strong>
+
+            </div>
 
           </div>
 
+
           <div className="admin-summary-card">
 
-            <span className="admin-summary-label">
-              Active Products
-            </span>
+            <div className="admin-summary-icon admin-summary-icon-active">
+              ✓
+            </div>
 
-            <strong>
-              {
-                products.filter(
-                  product =>
-                    product.active === true
-                ).length
-              }
-            </strong>
+            <div>
+
+              <span className="admin-summary-label">
+                Active Products
+              </span>
+
+              <strong>
+                {activeProducts}
+              </strong>
+
+            </div>
 
           </div>
 
+
           <div className="admin-summary-card">
 
-            <span className="admin-summary-label">
-              Inactive Products
-            </span>
+            <div className="admin-summary-icon admin-summary-icon-inactive">
+              ○
+            </div>
 
-            <strong>
-              {
-                products.filter(
-                  product =>
-                    product.active === false
-                ).length
-              }
-            </strong>
+            <div>
+
+              <span className="admin-summary-label">
+                Inactive Products
+              </span>
+
+              <strong>
+                {inactiveProducts}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <div className="admin-summary-card">
+
+            <div className="admin-summary-icon">
+              #
+            </div>
+
+            <div>
+
+              <span className="admin-summary-label">
+                Total Stock
+              </span>
+
+              <strong>
+                {totalStock}
+              </strong>
+
+            </div>
 
           </div>
 
         </div>
+
+
+        {/* EMPTY STATE */}
 
         {products.length === 0 ? (
 
@@ -845,6 +1011,10 @@ function AdminProducts() {
             <div className="admin-empty-icon">
               📦
             </div>
+
+            <span className="admin-products-label">
+              CATALOG EMPTY
+            </span>
 
             <h2>
               No Products Found
@@ -855,27 +1025,45 @@ function AdminProducts() {
               in the catalog.
             </p>
 
+            <button
+              type="button"
+              className="admin-primary-button"
+              onClick={handleOpenAddForm}
+            >
+              + Add Your First Product
+            </button>
+
           </div>
 
         ) : (
 
           <div className="admin-products-table-card">
 
+
             <div className="admin-table-header">
 
               <div>
+
+                <span className="admin-products-label">
+                  PRODUCT CATALOG
+                </span>
 
                 <h2>
                   Products
                 </h2>
 
                 <p>
-                  Manage your product catalog.
+                  Manage your complete product catalog.
                 </p>
 
               </div>
 
+              <div className="admin-table-count">
+                {products.length} products
+              </div>
+
             </div>
+
 
             <div className="admin-products-table-wrapper">
 
@@ -902,7 +1090,7 @@ function AdminProducts() {
                     </th>
 
                     <th>
-                      Product Stock
+                      Stock
                     </th>
 
                     <th>
@@ -917,6 +1105,7 @@ function AdminProducts() {
 
                 </thead>
 
+
                 <tbody>
 
                   {products.map(product => (
@@ -925,25 +1114,56 @@ function AdminProducts() {
                       key={product.id}
                     >
 
+
                       <td>
-                        #{product.id}
+
+                        <span className="admin-product-id">
+                          #{product.id}
+                        </span>
+
                       </td>
 
+
                       <td>
 
-                        <div className="admin-product-name">
+                        <div className="admin-product-cell">
 
-                          <strong>
-                            {product.name}
-                          </strong>
+                          <div className="admin-product-thumbnail">
 
-                          <span>
-                            {product.description}
-                          </span>
+                            {product.imageUrl ? (
+
+                              <img
+                                src={product.imageUrl}
+                                alt={product.name}
+                              />
+
+                            ) : (
+
+                              <span>
+                                O
+                              </span>
+
+                            )}
+
+                          </div>
+
+
+                          <div className="admin-product-name">
+
+                            <strong>
+                              {product.name}
+                            </strong>
+
+                            <span>
+                              {product.description}
+                            </span>
+
+                          </div>
 
                         </div>
 
                       </td>
+
 
                       <td>
 
@@ -953,24 +1173,41 @@ function AdminProducts() {
 
                       </td>
 
+
                       <td>
 
-                        ₹
-                        {Number(
-                          product.price
-                        ).toLocaleString(
-                          'en-IN',
-                          {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
+                        <strong className="admin-product-price">
+
+                          ₹
+                          {Number(
+                            product.price
+                          ).toLocaleString(
+                            'en-IN',
+                            {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2
+                            }
+                          )}
+
+                        </strong>
+
+                      </td>
+
+
+                      <td>
+
+                        <span
+                          className={
+                            Number(product.stockQuantity) > 0
+                              ? 'admin-stock-value'
+                              : 'admin-stock-value admin-stock-empty'
                           }
-                        )}
+                        >
+                          {product.stockQuantity}
+                        </span>
 
                       </td>
 
-                      <td>
-                        {product.stockQuantity}
-                      </td>
 
                       <td>
 
@@ -982,6 +1219,8 @@ function AdminProducts() {
                           }
                         >
 
+                          <span className="admin-status-dot" />
+
                           {product.active
                             ? 'Active'
                             : 'Inactive'
@@ -991,9 +1230,11 @@ function AdminProducts() {
 
                       </td>
 
+
                       <td>
 
                         <div className="admin-table-actions">
+
 
                           <button
                             type="button"
@@ -1009,6 +1250,7 @@ function AdminProducts() {
                           >
                             Edit
                           </button>
+
 
                           <button
                             type="button"

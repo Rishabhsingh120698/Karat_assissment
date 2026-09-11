@@ -57,78 +57,137 @@ function ProductCard({ product }) {
   return (
     <div className="product-card">
 
-      <span className="product-category">
-        {product.category}
-      </span>
+      <div className="product-image-container">
 
-      <h2 className="product-name">
-        {product.name}
-      </h2>
+        {product.imageUrl ? (
 
-      <p className="product-description">
-        {product.description ||
-          'Premium quality product from Project Orbit.'}
-      </p>
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="product-image"
+          />
 
-      <p className="product-price">
-        ₹{Number(product.price).toFixed(2)}
-      </p>
+        ) : (
 
-      <p
-        className={
-          isInStock
-            ? 'product-stock stock-available'
-            : 'product-stock stock-unavailable'
-        }
-      >
+          <div
+            className="product-image-placeholder"
+            aria-label="Product image unavailable"
+          >
 
-        {isInStock
-          ? `${availableQuantity} available`
-          : 'Out of Stock'}
-
-      </p>
-
-      {isInStock && (
-
-        <div className="product-actions">
-
-          <div className="quantity-controls">
-
-            <button
-              className="quantity-button"
-              onClick={decreaseQuantity}
-              disabled={quantity <= 1}
-            >
-              -
-            </button>
-
-            <span className="quantity-value">
-              {quantity}
+            <span>
+              ORBIT
             </span>
 
+            <strong>
+              PRODUCT
+            </strong>
+
+          </div>
+
+        )}
+
+        <span className="product-category">
+          {product.category}
+        </span>
+
+      </div>
+
+      <div className="product-card-content">
+
+        <h2 className="product-name">
+          {product.name}
+        </h2>
+
+        <p className="product-description">
+          {product.description ||
+            'Premium quality product from Project Orbit.'}
+        </p>
+
+        <div className="product-card-bottom">
+
+          <p className="product-price">
+            ₹{Number(product.price).toFixed(2)}
+          </p>
+
+          <p
+            className={
+              isInStock
+                ? 'product-stock stock-available'
+                : 'product-stock stock-unavailable'
+            }
+          >
+
+            <span className="stock-dot"></span>
+
+            {isInStock
+              ? `${availableQuantity} available`
+              : 'Out of Stock'}
+
+          </p>
+
+        </div>
+
+        {isInStock && (
+
+          <div className="product-actions">
+
+            <div className="quantity-controls">
+
+              <button
+                className="quantity-button"
+                onClick={decreaseQuantity}
+                disabled={quantity <= 1}
+                aria-label="Decrease quantity"
+              >
+                −
+              </button>
+
+              <span className="quantity-value">
+                {quantity}
+              </span>
+
+              <button
+                className="quantity-button"
+                onClick={increaseQuantity}
+                disabled={
+                  quantity >=
+                  availableQuantity
+                }
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+
+            </div>
+
             <button
-              className="quantity-button"
-              onClick={increaseQuantity}
-              disabled={
-                quantity >=
-                availableQuantity
-              }
+              className="add-cart-button"
+              onClick={handleAddToCart}
             >
-              +
+              Add to Cart
+
+              <span>
+                →
+              </span>
+
             </button>
 
           </div>
 
+        )}
+
+        {!isInStock && (
+
           <button
-            className="add-cart-button"
-            onClick={handleAddToCart}
+            className="add-cart-button product-out-of-stock-button"
+            disabled
           >
-            Add to Cart
+            Currently Unavailable
           </button>
 
-        </div>
+        )}
 
-      )}
+      </div>
 
     </div>
   )

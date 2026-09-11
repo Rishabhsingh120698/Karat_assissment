@@ -16,11 +16,14 @@ function OrderDetails() {
 
   const navigate = useNavigate()
 
-  const [order, setOrder] = useState(null)
+  const [order, setOrder] =
+    useState(null)
 
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] =
+    useState(true)
 
-  const [error, setError] = useState('')
+  const [error, setError] =
+    useState('')
 
   const [cancelling, setCancelling] =
     useState(false)
@@ -156,15 +159,19 @@ function OrderDetails() {
   if (loading) {
 
     return (
-      <main className="page-container">
+      <main className="order-details-page">
 
-        <div className="order-details-loading">
+        <div className="order-details-container">
 
-          <div className="loading-spinner" />
+          <div className="order-details-loading">
 
-          <p>
-            Loading order details...
-          </p>
+            <div className="loading-spinner" />
+
+            <p>
+              Loading order details...
+            </p>
+
+          </div>
 
         </div>
 
@@ -175,28 +182,32 @@ function OrderDetails() {
   if (error && !order) {
 
     return (
-      <main className="page-container">
+      <main className="order-details-page">
 
-        <div className="order-details-error">
+        <div className="order-details-container">
 
-          <div className="order-error-icon">
-            !
+          <div className="order-details-error">
+
+            <div className="order-error-icon">
+              !
+            </div>
+
+            <h1>
+              Unable to Load Order
+            </h1>
+
+            <p>
+              {error}
+            </p>
+
+            <Link
+              to="/orders"
+              className="primary-button"
+            >
+              ← Back to My Orders
+            </Link>
+
           </div>
-
-          <h1>
-            Unable to Load Order
-          </h1>
-
-          <p>
-            {error}
-          </p>
-
-          <Link
-            to="/orders"
-            className="primary-button"
-          >
-            Back to My Orders
-          </Link>
 
         </div>
 
@@ -207,24 +218,32 @@ function OrderDetails() {
   if (!order) {
 
     return (
-      <main className="page-container">
+      <main className="order-details-page">
 
-        <div className="order-details-error">
+        <div className="order-details-container">
 
-          <h1>
-            Order Not Found
-          </h1>
+          <div className="order-details-error">
 
-          <p>
-            We couldn't find the requested order.
-          </p>
+            <div className="order-error-icon">
+              ?
+            </div>
 
-          <Link
-            to="/orders"
-            className="primary-button"
-          >
-            Back to My Orders
-          </Link>
+            <h1>
+              Order Not Found
+            </h1>
+
+            <p>
+              We couldn't find the requested order.
+            </p>
+
+            <Link
+              to="/orders"
+              className="primary-button"
+            >
+              ← Back to My Orders
+            </Link>
+
+          </div>
 
         </div>
 
@@ -236,340 +255,444 @@ function OrderDetails() {
     order.status === 'CREATED' ||
     order.status === 'CONFIRMED'
 
+  const itemCount =
+    order.items
+      ? order.items.length
+      : 0
+
   return (
-    <main className="page-container">
+    <main className="order-details-page">
 
-      <div className="order-details-header">
+      <div className="order-details-container">
 
-        <div>
+        <div className="order-details-topbar">
 
-          <span className="order-label">
-            ORDER DETAILS
-          </span>
-
-          <h1 className="page-title">
-            #{order.orderNumber}
-          </h1>
-
-          <p className="page-subtitle">
-            Order ID: #{order.id}
-          </p>
+          <Link
+            to="/orders"
+            className="order-details-back-link"
+          >
+            ← Back to My Orders
+          </Link>
 
         </div>
 
-        <span
-          className={
-            `status-badge ${
-              getStatusClass(
-                order.status
-              )
-            }`
-          }
-        >
-          {order.status}
-        </span>
+        <div className="order-details-header">
 
-      </div>
+          <div>
 
-      {error && (
-        <div className="order-action-error">
-          {error}
-        </div>
-      )}
+            <span className="order-details-page-label">
+              ORDER DETAILS
+            </span>
 
-      <div className="order-details-layout">
+            <h1 className="page-title">
+              #{order.orderNumber}
+            </h1>
 
-        <section>
-
-          <div className="order-details-card">
-
-            <div className="order-details-card-header">
-
-              <h2>
-                Order Information
-              </h2>
-
-            </div>
-
-            <div className="order-details-info-grid">
-
-              <div className="order-detail-info-item">
-
-                <span>
-                  Order Number
-                </span>
-
-                <strong>
-                  #{order.orderNumber}
-                </strong>
-
-              </div>
-
-              <div className="order-detail-info-item">
-
-                <span>
-                  Order ID
-                </span>
-
-                <strong>
-                  #{order.id}
-                </strong>
-
-              </div>
-
-              <div className="order-detail-info-item">
-
-                <span>
-                  Status
-                </span>
-
-                <strong
-                  className="order-status-text"
-                >
-                  {order.status}
-                </strong>
-
-              </div>
-
-              <div className="order-detail-info-item">
-
-                <span>
-                  Created
-                </span>
-
-                <strong>
-                  {formatDate(
-                    order.createdAt
-                  )}
-                </strong>
-
-              </div>
-
-              <div className="order-detail-info-item">
-
-                <span>
-                  Last Updated
-                </span>
-
-                <strong>
-                  {formatDate(
-                    order.updatedAt
-                  )}
-                </strong>
-
-              </div>
-
-            </div>
+            <p className="page-subtitle">
+              Order ID: #{order.id}
+            </p>
 
           </div>
 
-          <div className="order-details-card">
+          <span
+            className={
+              `status-badge order-details-status ${
+                getStatusClass(
+                  order.status
+                )
+              }`
+            }
+          >
+            {order.status}
+          </span>
 
-            <div className="order-details-card-header">
+        </div>
 
-              <div>
+        {error && (
+
+          <div className="order-action-error">
+            <span>!</span>
+            {error}
+          </div>
+
+        )}
+
+        <div className="order-details-layout">
+
+          <section className="order-details-main">
+
+            <div className="order-details-card">
+
+              <div className="order-details-card-header">
+
+                <div>
+
+                  <span>
+                    ORDER OVERVIEW
+                  </span>
+
+                  <h2>
+                    Order Information
+                  </h2>
+
+                </div>
+
+                <div className="order-overview-icon">
+                  #
+                </div>
+
+              </div>
+
+              <div className="order-details-info-grid">
+
+                <div className="order-detail-info-item">
+
+                  <span>
+                    Order Number
+                  </span>
+
+                  <strong>
+                    #{order.orderNumber}
+                  </strong>
+
+                </div>
+
+                <div className="order-detail-info-item">
+
+                  <span>
+                    Order ID
+                  </span>
+
+                  <strong>
+                    #{order.id}
+                  </strong>
+
+                </div>
+
+                <div className="order-detail-info-item">
+
+                  <span>
+                    Status
+                  </span>
+
+                  <strong
+                    className={
+                      `order-status-text ${
+                        getStatusClass(
+                          order.status
+                        )
+                      }`
+                    }
+                  >
+                    {order.status}
+                  </strong>
+
+                </div>
+
+                <div className="order-detail-info-item">
+
+                  <span>
+                    Created
+                  </span>
+
+                  <strong>
+                    {formatDate(
+                      order.createdAt
+                    )}
+                  </strong>
+
+                </div>
+
+                <div className="order-detail-info-item">
+
+                  <span>
+                    Last Updated
+                  </span>
+
+                  <strong>
+                    {formatDate(
+                      order.updatedAt
+                    )}
+                  </strong>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div className="order-details-card">
+
+              <div className="order-details-card-header">
+
+                <div>
+
+                  <span>
+                    YOUR PURCHASE
+                  </span>
+
+                  <h2>
+                    Order Items
+                  </h2>
+
+                  <p>
+                    {itemCount}{' '}
+                    {itemCount === 1
+                      ? 'product'
+                      : 'products'}
+                  </p>
+
+                </div>
+
+                <div className="order-items-count">
+                  {itemCount}
+                </div>
+
+              </div>
+
+              <div className="order-items-list">
+
+                {order.items &&
+                  order.items.map(item => {
+
+                    return (
+
+                      <article
+                        className="order-detail-item"
+                        key={item.id}
+                      >
+
+                        <div className="order-detail-item-icon">
+                          📦
+                        </div>
+
+                        <div className="order-detail-item-info">
+
+                          <span>
+                            PRODUCT ID
+                          </span>
+
+                          <h3>
+                            #{item.productId}
+                          </h3>
+
+                        </div>
+
+                        <div className="order-detail-item-value">
+
+                          <span>
+                            Quantity
+                          </span>
+
+                          <strong>
+                            {item.quantity}
+                          </strong>
+
+                        </div>
+
+                        <div className="order-detail-item-value">
+
+                          <span>
+                            Unit Price
+                          </span>
+
+                          <strong>
+                            ₹{Number(
+                              item.price
+                            ).toLocaleString(
+                              'en-IN',
+                              {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                              }
+                            )}
+                          </strong>
+
+                        </div>
+
+                        <div className="order-detail-item-value order-item-subtotal">
+
+                          <span>
+                            Subtotal
+                          </span>
+
+                          <strong>
+                            ₹{Number(
+                              item.subtotal
+                            ).toLocaleString(
+                              'en-IN',
+                              {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                              }
+                            )}
+                          </strong>
+
+                        </div>
+
+                      </article>
+
+                    )
+                  })}
+
+              </div>
+
+            </div>
+
+          </section>
+
+
+          <aside className="order-details-sidebar">
+
+            <div className="order-total-card">
+
+              <div className="order-total-heading">
+
+                <span>
+                  PAYMENT SUMMARY
+                </span>
 
                 <h2>
-                  Order Items
+                  Order Total
                 </h2>
 
+              </div>
+
+              <div className="order-total-line">
+
+                <span>
+                  Items
+                </span>
+
+                <span>
+                  {itemCount}
+                </span>
+
+              </div>
+
+              <div className="order-total-divider" />
+
+              <div className="order-total-final">
+
+                <span>
+                  Total Amount
+                </span>
+
+                <strong>
+                  ₹{Number(
+                    order.totalAmount
+                  ).toLocaleString(
+                    'en-IN',
+                    {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    }
+                  )}
+                </strong>
+
+              </div>
+
+              <div className="order-secure-note">
+
+                <span>
+                  🔒
+                </span>
+
                 <p>
-                  {order.items
-                    ? order.items.length
-                    : 0}{' '}
-                  {order.items &&
-                  order.items.length === 1
-                    ? 'product'
-                    : 'products'}
+                  Securely processed through
+                  Project Orbit services.
                 </p>
 
               </div>
 
             </div>
 
-            <div className="order-items-list">
 
-              {order.items &&
-                order.items.map(item => {
+            {canCancel && (
 
-                  return (
-                    <article
-                      className="order-detail-item"
-                      key={item.id}
-                    >
+              <div className="cancel-order-card">
 
-                      <div className="order-detail-item-icon">
-                        📦
-                      </div>
+                <div className="cancel-card-icon">
+                  !
+                </div>
 
-                      <div className="order-detail-item-info">
+                <div>
 
-                        <span>
-                          Product ID
-                        </span>
+                  <h2>
+                    Cancel Order
+                  </h2>
 
-                        <h3>
-                          #{item.productId}
-                        </h3>
+                  <p>
+                    You can cancel this order
+                    while it is still in the
+                    CREATED or CONFIRMED state.
+                  </p>
 
-                      </div>
+                </div>
 
-                      <div className="order-detail-item-value">
+                <button
+                  className="cancel-order-button"
+                  onClick={
+                    handleCancelOrder
+                  }
+                  disabled={cancelling}
+                >
+                  {cancelling
+                    ? 'Cancelling...'
+                    : 'Cancel Order'}
+                </button>
 
-                        <span>
-                          Quantity
-                        </span>
-
-                        <strong>
-                          {item.quantity}
-                        </strong>
-
-                      </div>
-
-                      <div className="order-detail-item-value">
-
-                        <span>
-                          Unit Price
-                        </span>
-
-                        <strong>
-                          ₹{Number(
-                            item.price
-                          ).toFixed(2)}
-                        </strong>
-
-                      </div>
-
-                      <div className="order-detail-item-value order-item-subtotal">
-
-                        <span>
-                          Subtotal
-                        </span>
-
-                        <strong>
-                          ₹{Number(
-                            item.subtotal
-                          ).toFixed(2)}
-                        </strong>
-
-                      </div>
-
-                    </article>
-                  )
-                })}
-
-            </div>
-
-          </div>
-
-        </section>
-
-        <aside>
-
-          <div className="order-total-card">
-
-            <h2>
-              Order Total
-            </h2>
-
-            <div className="order-total-line">
-
-              <span>
-                Items
-              </span>
-
-              <span>
-                {order.items
-                  ? order.items.length
-                  : 0}
-              </span>
-
-            </div>
-
-            <div className="order-total-divider" />
-
-            <div className="order-total-final">
-
-              <span>
-                Total Amount
-              </span>
-
-              <strong>
-                ₹{Number(
-                  order.totalAmount
-                ).toFixed(2)}
-              </strong>
-
-            </div>
-
-          </div>
-
-          {canCancel && (
-
-            <div className="cancel-order-card">
-
-              <h2>
-                Cancel Order
-              </h2>
-
-              <p>
-                You can cancel this order
-                while it is still in the
-                CREATED or CONFIRMED state.
-              </p>
-
-              <button
-                className="cancel-order-button"
-                onClick={
-                  handleCancelOrder
-                }
-                disabled={cancelling}
-              >
-                {cancelling
-                  ? 'Cancelling...'
-                  : 'Cancel Order'}
-              </button>
-
-            </div>
-
-          )}
-
-          {!canCancel && (
-            <div className="order-status-card">
-
-              <div className="order-status-card-icon">
-                ✓
               </div>
 
-              <h2>
-                Order Status
-              </h2>
+            )}
 
-              <p>
-                This order is currently
-                <strong>
-                  {' '}{order.status}
-                </strong>.
-              </p>
 
-              <p>
-                Cancellation is not available
-                for this order status.
-              </p>
+            {!canCancel && (
 
-            </div>
-          )}
+              <div className="order-status-card">
 
-          <button
-            className="back-orders-button"
-            onClick={() =>
-              navigate('/orders')
-            }
-          >
-            ← Back to My Orders
-          </button>
+                <div className="order-status-card-icon">
+                  ✓
+                </div>
 
-        </aside>
+                <span className="order-status-card-label">
+                  CURRENT STATUS
+                </span>
+
+                <h2>
+                  Order Status
+                </h2>
+
+                <p>
+                  This order is currently
+                  <strong>
+                    {' '}{order.status}
+                  </strong>.
+                </p>
+
+                <p>
+                  Cancellation is not available
+                  for this order status.
+                </p>
+
+              </div>
+
+            )}
+
+
+            <button
+              className="back-orders-button"
+              onClick={() =>
+                navigate('/orders')
+              }
+            >
+              ← Back to My Orders
+            </button>
+
+          </aside>
+
+        </div>
 
       </div>
 

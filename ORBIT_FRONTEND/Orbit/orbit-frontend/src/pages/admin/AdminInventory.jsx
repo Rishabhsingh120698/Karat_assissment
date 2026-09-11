@@ -7,6 +7,7 @@ import {
   decreaseStock
 } from '../../services/inventoryService'
 
+
 function AdminInventory() {
 
   const [inventory, setInventory] =
@@ -32,6 +33,7 @@ function AdminInventory() {
 
   const [actionSuccess, setActionSuccess] =
     useState('')
+
 
   const loadInventory = async () => {
 
@@ -69,11 +71,13 @@ function AdminInventory() {
     }
   }
 
+
   useEffect(() => {
 
     loadInventory()
 
   }, [])
+
 
   const handleOpenManage = (productId) => {
 
@@ -83,7 +87,9 @@ function AdminInventory() {
 
     setActionError('')
     setActionSuccess('')
+
   }
+
 
   const handleCloseManage = () => {
 
@@ -97,7 +103,9 @@ function AdminInventory() {
 
     setActionError('')
     setActionSuccess('')
+
   }
+
 
   const handleQuantityChange = (event) => {
 
@@ -107,7 +115,9 @@ function AdminInventory() {
 
     setActionError('')
     setActionSuccess('')
+
   }
+
 
   const handleIncreaseStock = async () => {
 
@@ -168,6 +178,7 @@ function AdminInventory() {
     }
   }
 
+
   const handleDecreaseStock = async () => {
 
     setActionError('')
@@ -227,16 +238,18 @@ function AdminInventory() {
     }
   }
 
+
   if (loading) {
 
     return (
+
       <main className="admin-inventory-page">
 
         <div className="admin-inventory-container">
 
-          <div className="loading-container">
+          <div className="admin-page-loading">
 
-            <div className="loading-spinner" />
+            <div className="admin-loading-spinner" />
 
             <p>
               Loading inventory...
@@ -247,17 +260,24 @@ function AdminInventory() {
         </div>
 
       </main>
+
     )
   }
+
 
   if (error) {
 
     return (
+
       <main className="admin-inventory-page">
 
         <div className="admin-inventory-container">
 
-          <div className="error-container">
+          <div className="admin-page-error">
+
+            <div className="admin-error-icon">
+              !
+            </div>
 
             <h2>
               Unable to load inventory
@@ -269,7 +289,7 @@ function AdminInventory() {
 
             <Link
               to="/admin"
-              className="back-link"
+              className="admin-back-link"
             >
               ← Back to Admin Dashboard
             </Link>
@@ -279,8 +299,10 @@ function AdminInventory() {
         </div>
 
       </main>
+
     )
   }
+
 
   const totalStock =
     inventory.reduce(
@@ -290,6 +312,7 @@ function AdminInventory() {
       0
     )
 
+
   const totalReserved =
     inventory.reduce(
       (total, item) =>
@@ -297,6 +320,7 @@ function AdminInventory() {
         Number(item.reservedQuantity || 0),
       0
     )
+
 
   const totalAvailable =
     inventory.reduce(
@@ -306,10 +330,64 @@ function AdminInventory() {
       0
     )
 
+
+  const lowStockItems =
+    inventory.filter(
+      item =>
+        Number(item.availableQuantity || 0) > 0 &&
+        Number(item.availableQuantity || 0) <= 5
+    ).length
+
+
+  const outOfStockItems =
+    inventory.filter(
+      item =>
+        Number(item.availableQuantity || 0) <= 0
+    ).length
+
+
+  const getStockClass = (availableQuantity) => {
+
+    const available =
+      Number(availableQuantity || 0)
+
+    if (available <= 0) {
+      return 'inventory-stock-danger'
+    }
+
+    if (available <= 5) {
+      return 'inventory-stock-warning'
+    }
+
+    return 'inventory-stock-good'
+  }
+
+
+  const getStockLabel = (availableQuantity) => {
+
+    const available =
+      Number(availableQuantity || 0)
+
+    if (available <= 0) {
+      return 'Out of Stock'
+    }
+
+    if (available <= 5) {
+      return 'Low Stock'
+    }
+
+    return 'In Stock'
+  }
+
+
   return (
+
     <main className="admin-inventory-page">
 
       <div className="admin-inventory-container">
+
+
+        {/* HEADER */}
 
         <div className="admin-inventory-header">
 
@@ -317,13 +395,13 @@ function AdminInventory() {
 
             <Link
               to="/admin"
-              className="back-link"
+              className="admin-back-link"
             >
               ← Back to Admin Dashboard
             </Link>
 
             <span className="admin-inventory-label">
-              ADMINISTRATION
+              PROJECT ORBIT • STOCK CONTROL
             </span>
 
             <h1>
@@ -331,87 +409,217 @@ function AdminInventory() {
             </h1>
 
             <p>
-              View and manage stock levels for
-              Project Orbit products.
+              Monitor stock levels and manage
+              product inventory across the catalog.
             </p>
 
           </div>
 
         </div>
 
+
+        {/* ACTION MESSAGES */}
+
         {actionError && (
 
           <div
-            className="admin-form-error"
+            className="admin-form-error admin-status-message"
             role="alert"
           >
+            <span>!</span>
             {actionError}
           </div>
 
         )}
 
+
         {actionSuccess && (
 
           <div
-            className="admin-form-success"
+            className="admin-form-success admin-status-message"
             role="status"
           >
+            <span>✓</span>
             {actionSuccess}
           </div>
 
         )}
 
+
+        {/* SUMMARY */}
+
         <div className="admin-inventory-summary">
 
+
           <div className="admin-summary-card">
 
-            <span className="admin-summary-label">
-              Products
-            </span>
+            <div className="admin-summary-icon">
+              ◈
+            </div>
 
-            <strong>
-              {inventory.length}
-            </strong>
+            <div>
+
+              <span className="admin-summary-label">
+                Products
+              </span>
+
+              <strong>
+                {inventory.length}
+              </strong>
+
+            </div>
 
           </div>
 
+
           <div className="admin-summary-card">
 
-            <span className="admin-summary-label">
-              Total Stock
-            </span>
+            <div className="admin-summary-icon">
+              #
+            </div>
 
-            <strong>
-              {totalStock}
-            </strong>
+            <div>
+
+              <span className="admin-summary-label">
+                Total Stock
+              </span>
+
+              <strong>
+                {totalStock}
+              </strong>
+
+            </div>
 
           </div>
 
+
           <div className="admin-summary-card">
 
-            <span className="admin-summary-label">
-              Reserved
-            </span>
+            <div className="admin-summary-icon admin-summary-icon-inactive">
+              ↔
+            </div>
 
-            <strong>
-              {totalReserved}
-            </strong>
+            <div>
+
+              <span className="admin-summary-label">
+                Reserved
+              </span>
+
+              <strong>
+                {totalReserved}
+              </strong>
+
+            </div>
 
           </div>
 
+
           <div className="admin-summary-card">
 
-            <span className="admin-summary-label">
-              Available
-            </span>
+            <div className="admin-summary-icon admin-summary-icon-active">
+              ✓
+            </div>
 
-            <strong>
-              {totalAvailable}
-            </strong>
+            <div>
+
+              <span className="admin-summary-label">
+                Available
+              </span>
+
+              <strong>
+                {totalAvailable}
+              </strong>
+
+            </div>
 
           </div>
 
         </div>
+
+
+        {/* STOCK ALERTS */}
+
+        <div className="inventory-alert-row">
+
+
+          <div className="inventory-alert-card inventory-alert-warning">
+
+            <div className="inventory-alert-icon">
+              !
+            </div>
+
+            <div>
+
+              <span>
+                LOW STOCK
+              </span>
+
+              <strong>
+                {lowStockItems}
+              </strong>
+
+              <p>
+                Products need attention
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div className="inventory-alert-card inventory-alert-danger">
+
+            <div className="inventory-alert-icon">
+              ×
+            </div>
+
+            <div>
+
+              <span>
+                OUT OF STOCK
+              </span>
+
+              <strong>
+                {outOfStockItems}
+              </strong>
+
+              <p>
+                Products unavailable
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div className="inventory-alert-card inventory-alert-neutral">
+
+            <div className="inventory-alert-icon">
+              ✓
+            </div>
+
+            <div>
+
+              <span>
+                AVAILABLE UNITS
+              </span>
+
+              <strong>
+                {totalAvailable}
+              </strong>
+
+              <p>
+                Ready for customers
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        {/* EMPTY STATE */}
 
         {inventory.length === 0 ? (
 
@@ -421,13 +629,17 @@ function AdminInventory() {
               📊
             </div>
 
+            <span className="admin-inventory-label">
+              INVENTORY EMPTY
+            </span>
+
             <h2>
               No Inventory Found
             </h2>
 
             <p>
               There is currently no inventory
-              available.
+              available in the system.
             </p>
 
           </div>
@@ -436,21 +648,35 @@ function AdminInventory() {
 
           <div className="admin-inventory-table-card">
 
+
+            {/* TABLE HEADER */}
+
             <div className="admin-table-header">
 
               <div>
+
+                <span className="admin-inventory-label">
+                  STOCK OVERVIEW
+                </span>
 
                 <h2>
                   Inventory
                 </h2>
 
                 <p>
-                  Monitor and manage product stock.
+                  Monitor and manage product stock levels.
                 </p>
 
               </div>
 
+              <div className="admin-table-count">
+                {inventory.length} records
+              </div>
+
             </div>
+
+
+            {/* TABLE */}
 
             <div className="admin-inventory-table-wrapper">
 
@@ -461,15 +687,15 @@ function AdminInventory() {
                   <tr>
 
                     <th>
-                      Inventory ID
+                      Inventory
                     </th>
 
                     <th>
-                      Product ID
+                      Product
                     </th>
 
                     <th>
-                      Stock
+                      Total Stock
                     </th>
 
                     <th>
@@ -481,12 +707,17 @@ function AdminInventory() {
                     </th>
 
                     <th>
-                      Actions
+                      Status
+                    </th>
+
+                    <th>
+                      Action
                     </th>
 
                   </tr>
 
                 </thead>
+
 
                 <tbody>
 
@@ -496,31 +727,106 @@ function AdminInventory() {
                       key={item.id}
                     >
 
-                      <td>
-                        #{item.id}
-                      </td>
 
                       <td>
-                        Product #{item.productId}
+
+                        <span className="inventory-id">
+                          #{item.id}
+                        </span>
+
                       </td>
 
-                      <td>
-                        {item.stockQuantity}
-                      </td>
 
                       <td>
-                        {item.reservedQuantity}
+
+                        <div className="inventory-product-cell">
+
+                          <div className="inventory-product-icon">
+                            📦
+                          </div>
+
+                          <div>
+
+                            <strong>
+                              Product #{item.productId}
+                            </strong>
+
+                            <span>
+                              Inventory record
+                            </span>
+
+                          </div>
+
+                        </div>
+
                       </td>
 
+
                       <td>
-                        {item.availableQuantity}
+
+                        <span className="inventory-number inventory-total">
+                          {item.stockQuantity}
+                        </span>
+
                       </td>
+
+
+                      <td>
+
+                        <span className="inventory-number inventory-reserved">
+                          {item.reservedQuantity}
+                        </span>
+
+                      </td>
+
+
+                      <td>
+
+                        <span
+                          className={
+                            `inventory-number ${
+                              Number(item.availableQuantity || 0) <= 0
+                                ? 'inventory-available-danger'
+                                : Number(item.availableQuantity || 0) <= 5
+                                  ? 'inventory-available-warning'
+                                  : 'inventory-available-good'
+                            }`
+                          }
+                        >
+                          {item.availableQuantity}
+                        </span>
+
+                      </td>
+
+
+                      <td>
+
+                        <span
+                          className={
+                            `inventory-status ${
+                              getStockClass(
+                                item.availableQuantity
+                              )
+                            }`
+                          }
+                        >
+
+                          <span className="inventory-status-dot" />
+
+                          {getStockLabel(
+                            item.availableQuantity
+                          )}
+
+                        </span>
+
+                      </td>
+
 
                       <td>
 
                         <button
                           type="button"
-                          className="admin-action-button"
+                          className="inventory-manage-button"
                           onClick={() =>
                             handleOpenManage(
                               item.productId
@@ -528,6 +834,9 @@ function AdminInventory() {
                           }
                         >
                           Manage Stock
+                          <span>
+                            →
+                          </span>
                         </button>
 
                       </td>
@@ -546,9 +855,13 @@ function AdminInventory() {
 
         )}
 
+
+        {/* MANAGE STOCK */}
+
         {selectedProductId !== null && (
 
           <div className="admin-inventory-manage-card">
+
 
             <div className="admin-inventory-manage-header">
 
@@ -559,16 +872,16 @@ function AdminInventory() {
                 </span>
 
                 <h2>
-                  Manage Product #
-                  {selectedProductId}
+                  Manage Product #{selectedProductId}
                 </h2>
 
                 <p>
-                  Increase or decrease the
-                  available product stock.
+                  Increase or decrease the inventory
+                  quantity for this product.
                 </p>
 
               </div>
+
 
               <button
                 type="button"
@@ -581,61 +894,103 @@ function AdminInventory() {
 
             </div>
 
-            <div className="admin-inventory-manage-form">
 
-              <div className="admin-form-field">
+            <div className="inventory-manage-content">
 
-                <label htmlFor="stock-quantity">
-                  Quantity
-                </label>
 
-                <input
-                  id="stock-quantity"
-                  type="number"
-                  min="1"
-                  step="1"
-                  value={quantity}
-                  onChange={handleQuantityChange}
-                  placeholder="Enter quantity"
-                  disabled={actionLoading}
-                />
+              <div className="inventory-manage-product">
+
+                <div className="inventory-manage-icon">
+                  📦
+                </div>
+
+                <div>
+
+                  <span>
+                    PRODUCT
+                  </span>
+
+                  <strong>
+                    #{selectedProductId}
+                  </strong>
+
+                </div>
 
               </div>
 
-              <div className="admin-form-actions">
 
-                <button
-                  type="button"
-                  className="admin-secondary-button"
-                  onClick={handleCloseManage}
-                  disabled={actionLoading}
-                >
-                  Cancel
-                </button>
+              <div className="inventory-manage-form">
 
-                <button
-                  type="button"
-                  className="admin-primary-button"
-                  onClick={handleIncreaseStock}
-                  disabled={actionLoading}
-                >
-                  {actionLoading
-                    ? 'Updating...'
-                    : 'Increase Stock'
-                  }
-                </button>
+                <div className="admin-form-field">
 
-                <button
-                  type="button"
-                  className="admin-action-button admin-danger-action"
-                  onClick={handleDecreaseStock}
-                  disabled={actionLoading}
-                >
-                  {actionLoading
-                    ? 'Updating...'
-                    : 'Decrease Stock'
-                  }
-                </button>
+                  <label htmlFor="stock-quantity">
+                    Quantity
+                  </label>
+
+                  <input
+                    id="stock-quantity"
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={quantity}
+                    onChange={handleQuantityChange}
+                    placeholder="Enter quantity"
+                    disabled={actionLoading}
+                  />
+
+                </div>
+
+
+                <div className="inventory-manage-actions">
+
+                  <button
+                    type="button"
+                    className="inventory-increase-button"
+                    onClick={handleIncreaseStock}
+                    disabled={actionLoading}
+                  >
+
+                    <span>
+                      +
+                    </span>
+
+                    {actionLoading
+                      ? 'Updating...'
+                      : 'Increase Stock'
+                    }
+
+                  </button>
+
+
+                  <button
+                    type="button"
+                    className="inventory-decrease-button"
+                    onClick={handleDecreaseStock}
+                    disabled={actionLoading}
+                  >
+
+                    <span>
+                      −
+                    </span>
+
+                    {actionLoading
+                      ? 'Updating...'
+                      : 'Decrease Stock'
+                    }
+
+                  </button>
+
+
+                  <button
+                    type="button"
+                    className="admin-secondary-button"
+                    onClick={handleCloseManage}
+                    disabled={actionLoading}
+                  >
+                    Cancel
+                  </button>
+
+                </div>
 
               </div>
 

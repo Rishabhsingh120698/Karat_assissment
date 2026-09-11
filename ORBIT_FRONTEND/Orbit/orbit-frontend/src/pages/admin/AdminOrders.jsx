@@ -6,6 +6,7 @@ import {
   updateOrderStatus
 } from '../../services/orderService'
 
+
 function AdminOrders() {
 
   const [orders, setOrders] =
@@ -29,6 +30,7 @@ function AdminOrders() {
   const [actionSuccess, setActionSuccess] =
     useState('')
 
+
   // ============================================================
   // LOAD ALL ORDERS
   // ============================================================
@@ -50,15 +52,13 @@ function AdminOrders() {
 
       setOrders(data)
 
-      // Initialize selected status
-      // using the current status of each order.
-
       const initialStatuses = {}
 
       data.forEach(order => {
 
         initialStatuses[order.id] =
           order.status
+
       })
 
       setSelectedStatuses(
@@ -80,8 +80,10 @@ function AdminOrders() {
     } finally {
 
       setLoading(false)
+
     }
   }
+
 
   // ============================================================
   // INITIAL LOAD
@@ -92,6 +94,7 @@ function AdminOrders() {
     loadOrders()
 
   }, [])
+
 
   // ============================================================
   // STATUS CHANGE
@@ -110,6 +113,7 @@ function AdminOrders() {
     setActionError('')
     setActionSuccess('')
   }
+
 
   // ============================================================
   // UPDATE ORDER STATUS
@@ -196,8 +200,10 @@ function AdminOrders() {
     } finally {
 
       setUpdatingOrderId(null)
+
     }
   }
+
 
   // ============================================================
   // AVAILABLE STATUS OPTIONS
@@ -247,6 +253,7 @@ function AdminOrders() {
     }
   }
 
+
   // ============================================================
   // FORMAT DATE
   // ============================================================
@@ -262,15 +269,24 @@ function AdminOrders() {
     const date =
       new Date(dateValue)
 
-    if (Number.isNaN(
-      date.getTime()
-    )) {
+    if (
+      Number.isNaN(
+        date.getTime()
+      )
+    ) {
 
       return dateValue
     }
 
-    return date.toLocaleString()
+    return date.toLocaleString(
+      'en-IN',
+      {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      }
+    )
   }
+
 
   // ============================================================
   // FORMAT CURRENCY
@@ -288,7 +304,9 @@ function AdminOrders() {
       return '₹0.00'
     }
 
-    return `₹${Number(amount).toLocaleString(
+    return `₹${Number(
+      amount
+    ).toLocaleString(
       'en-IN',
       {
         minimumFractionDigits: 2,
@@ -296,6 +314,7 @@ function AdminOrders() {
       }
     )}`
   }
+
 
   // ============================================================
   // STATUS CLASS
@@ -330,23 +349,25 @@ function AdminOrders() {
     }
   }
 
+
   // ============================================================
-  // LOADING STATE
+  // LOADING
   // ============================================================
 
   if (loading) {
 
     return (
+
       <main className="admin-orders-page">
 
         <div className="admin-orders-container">
 
-          <div className="loading-container">
+          <div className="admin-page-loading">
 
-            <div className="loading-spinner" />
+            <div className="admin-loading-spinner" />
 
             <p>
-              Loading orders...
+              Loading customer orders...
             </p>
 
           </div>
@@ -354,21 +375,28 @@ function AdminOrders() {
         </div>
 
       </main>
+
     )
   }
 
+
   // ============================================================
-  // ERROR STATE
+  // ERROR
   // ============================================================
 
   if (error) {
 
     return (
+
       <main className="admin-orders-page">
 
         <div className="admin-orders-container">
 
-          <div className="error-container">
+          <div className="admin-page-error">
+
+            <div className="admin-error-icon">
+              !
+            </div>
 
             <h2>
               Unable to load orders
@@ -380,7 +408,7 @@ function AdminOrders() {
 
             <Link
               to="/admin"
-              className="back-link"
+              className="admin-back-link"
             >
               ← Back to Admin Dashboard
             </Link>
@@ -390,15 +418,23 @@ function AdminOrders() {
         </div>
 
       </main>
+
     )
   }
 
+
   // ============================================================
-  // SUMMARY VALUES
+  // SUMMARY
   // ============================================================
 
   const totalOrders =
     orders.length
+
+  const createdOrders =
+    orders.filter(
+      order =>
+        order.status === 'CREATED'
+    ).length
 
   const confirmedOrders =
     orders.filter(
@@ -410,6 +446,12 @@ function AdminOrders() {
     orders.filter(
       order =>
         order.status === 'PROCESSING'
+    ).length
+
+  const shippedOrders =
+    orders.filter(
+      order =>
+        order.status === 'SHIPPED'
     ).length
 
   const completedOrders =
@@ -424,14 +466,13 @@ function AdminOrders() {
         order.status === 'CANCELLED'
     ).length
 
-  // ============================================================
-  // UI
-  // ============================================================
 
   return (
+
     <main className="admin-orders-page">
 
       <div className="admin-orders-container">
+
 
         {/* =====================================================
             HEADER
@@ -443,13 +484,13 @@ function AdminOrders() {
 
             <Link
               to="/admin"
-              className="back-link"
+              className="admin-back-link"
             >
               ← Back to Admin Dashboard
             </Link>
 
             <span className="admin-orders-label">
-              ADMINISTRATION
+              PROJECT ORBIT • OPERATIONS
             </span>
 
             <h1>
@@ -457,13 +498,14 @@ function AdminOrders() {
             </h1>
 
             <p>
-              View customer orders and manage
-              their order lifecycle.
+              Monitor customer orders and manage
+              their complete order lifecycle.
             </p>
 
           </div>
 
         </div>
+
 
         {/* =====================================================
             ACTION ERROR
@@ -472,13 +514,15 @@ function AdminOrders() {
         {actionError && (
 
           <div
-            className="admin-form-error"
+            className="admin-form-error admin-status-message"
             role="alert"
           >
+            <span>!</span>
             {actionError}
           </div>
 
         )}
+
 
         {/* =====================================================
             ACTION SUCCESS
@@ -487,13 +531,15 @@ function AdminOrders() {
         {actionSuccess && (
 
           <div
-            className="admin-form-success"
+            className="admin-form-success admin-status-message"
             role="status"
           >
+            <span>✓</span>
             {actionSuccess}
           </div>
 
         )}
+
 
         {/* =====================================================
             SUMMARY
@@ -501,67 +547,155 @@ function AdminOrders() {
 
         <div className="admin-orders-summary">
 
+
           <div className="admin-summary-card">
 
-            <span className="admin-summary-label">
-              Total Orders
-            </span>
+            <div className="admin-summary-icon">
+              ◈
+            </div>
 
-            <strong>
-              {totalOrders}
-            </strong>
+            <div>
+
+              <span className="admin-summary-label">
+                Total Orders
+              </span>
+
+              <strong>
+                {totalOrders}
+              </strong>
+
+            </div>
 
           </div>
 
+
           <div className="admin-summary-card">
 
-            <span className="admin-summary-label">
-              Confirmed
-            </span>
+            <div className="admin-summary-icon admin-summary-icon-created">
+              ○
+            </div>
 
-            <strong>
-              {confirmedOrders}
-            </strong>
+            <div>
+
+              <span className="admin-summary-label">
+                Created
+              </span>
+
+              <strong>
+                {createdOrders}
+              </strong>
+
+            </div>
 
           </div>
 
+
           <div className="admin-summary-card">
 
-            <span className="admin-summary-label">
-              Processing
-            </span>
+            <div className="admin-summary-icon admin-summary-icon-active">
+              ✓
+            </div>
 
-            <strong>
-              {processingOrders}
-            </strong>
+            <div>
+
+              <span className="admin-summary-label">
+                Confirmed
+              </span>
+
+              <strong>
+                {confirmedOrders}
+              </strong>
+
+            </div>
 
           </div>
 
+
           <div className="admin-summary-card">
 
-            <span className="admin-summary-label">
-              Delivered
-            </span>
+            <div className="admin-summary-icon admin-summary-icon-processing">
+              ↻
+            </div>
 
-            <strong>
-              {completedOrders}
-            </strong>
+            <div>
+
+              <span className="admin-summary-label">
+                Processing
+              </span>
+
+              <strong>
+                {processingOrders}
+              </strong>
+
+            </div>
 
           </div>
 
+
           <div className="admin-summary-card">
 
-            <span className="admin-summary-label">
-              Cancelled
-            </span>
+            <div className="admin-summary-icon admin-summary-icon-shipped">
+              →
+            </div>
 
-            <strong>
-              {cancelledOrders}
-            </strong>
+            <div>
+
+              <span className="admin-summary-label">
+                Shipped
+              </span>
+
+              <strong>
+                {shippedOrders}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <div className="admin-summary-card">
+
+            <div className="admin-summary-icon admin-summary-icon-delivered">
+              ✓
+            </div>
+
+            <div>
+
+              <span className="admin-summary-label">
+                Delivered
+              </span>
+
+              <strong>
+                {completedOrders}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <div className="admin-summary-card">
+
+            <div className="admin-summary-icon admin-summary-icon-inactive">
+              ×
+            </div>
+
+            <div>
+
+              <span className="admin-summary-label">
+                Cancelled
+              </span>
+
+              <strong>
+                {cancelledOrders}
+              </strong>
+
+            </div>
 
           </div>
 
         </div>
+
 
         {/* =====================================================
             EMPTY STATE
@@ -574,6 +708,10 @@ function AdminOrders() {
             <div className="admin-empty-icon">
               🛒
             </div>
+
+            <span className="admin-orders-label">
+              ORDER QUEUE EMPTY
+            </span>
 
             <h2>
               No Orders Found
@@ -588,28 +726,40 @@ function AdminOrders() {
 
         ) : (
 
+
           /* ===================================================
              ORDER TABLE
           ==================================================== */
 
           <div className="admin-orders-table-card">
 
+
             <div className="admin-table-header">
 
               <div>
+
+                <span className="admin-orders-label">
+                  ORDER OPERATIONS
+                </span>
 
                 <h2>
                   Customer Orders
                 </h2>
 
                 <p>
-                  Monitor orders and update
-                  their lifecycle status.
+                  Monitor orders and update their
+                  lifecycle status.
                 </p>
 
               </div>
 
+
+              <div className="admin-table-count">
+                {orders.length} orders
+              </div>
+
             </div>
+
 
             <div className="admin-orders-table-wrapper">
 
@@ -651,6 +801,7 @@ function AdminOrders() {
 
                 </thead>
 
+
                 <tbody>
 
                   {orders.map(order => {
@@ -669,41 +820,73 @@ function AdminOrders() {
                       updatingOrderId ===
                       order.id
 
+
                     return (
 
                       <tr
                         key={order.id}
                       >
 
+
                         {/* ORDER */}
 
                         <td>
 
-                          <div className="admin-order-number">
+                          <div className="admin-order-main">
 
-                            <Link
-                              to={`/orders/${order.id}`}
-                            >
-                              {order.orderNumber}
-                            </Link>
+                            <div className="admin-order-icon">
+                              #
+                            </div>
+
+                            <div>
+
+                              <div className="admin-order-number">
+
+                                <Link
+                                  to={`/orders/${order.id}`}
+                                >
+                                  {order.orderNumber}
+                                </Link>
+
+                              </div>
+
+                              <span className="admin-order-id">
+                                Order #{order.id}
+                              </span>
+
+                            </div>
 
                           </div>
 
-                          <span className="admin-order-id">
-                            Order #{order.id}
-                          </span>
-
                         </td>
+
 
                         {/* CUSTOMER */}
 
                         <td>
 
-                          <span className="admin-customer-id">
-                            User #{order.userId}
-                          </span>
+                          <div className="admin-customer-cell">
+
+                            <div className="admin-customer-avatar">
+                              U
+                            </div>
+
+                            <div>
+
+                              <strong>
+                                Customer
+                              </strong>
+
+                              <span>
+                                User #{order.userId}
+                              </span>
+
+                            </div>
+
+                          </div>
 
                         </td>
+
 
                         {/* AMOUNT */}
 
@@ -717,17 +900,21 @@ function AdminOrders() {
 
                         </td>
 
+
                         {/* ITEMS */}
 
                         <td>
 
                           <span className="admin-order-items-count">
 
-                            {order.items
-                              ? order.items.length
-                              : 0}
+                            <strong>
+                              {order.items
+                                ? order.items.length
+                                : 0}
+                            </strong>
 
                             {' '}
+
                             {order.items &&
                             order.items.length === 1
                               ? 'item'
@@ -736,6 +923,7 @@ function AdminOrders() {
                           </span>
 
                         </td>
+
 
                         {/* CURRENT STATUS */}
 
@@ -748,22 +936,32 @@ function AdminOrders() {
                               )}`
                             }
                           >
+
+                            <span className="admin-order-status-dot" />
+
                             {order.status}
+
                           </span>
 
                         </td>
+
 
                         {/* CREATED */}
 
                         <td>
 
-                          <span className="admin-order-date">
-                            {formatDate(
-                              order.createdAt
-                            )}
-                          </span>
+                          <div className="admin-order-date">
+
+                            <span>
+                              {formatDate(
+                                order.createdAt
+                              )}
+                            </span>
+
+                          </div>
 
                         </td>
+
 
                         {/* UPDATE STATUS */}
 
@@ -772,6 +970,10 @@ function AdminOrders() {
                           {statusOptions.length === 0 ? (
 
                             <span className="admin-order-no-action">
+
+                              <span>
+                                ✓
+                              </span>
 
                               {order.status ===
                               'DELIVERED'
@@ -783,6 +985,7 @@ function AdminOrders() {
                           ) : (
 
                             <div className="admin-order-status-actions">
+
 
                               <select
                                 value={
@@ -809,6 +1012,7 @@ function AdminOrders() {
                                   {order.status}
                                 </option>
 
+
                                 {statusOptions.map(
                                   status => (
 
@@ -823,6 +1027,7 @@ function AdminOrders() {
                                 )}
 
                               </select>
+
 
                               <button
                                 type="button"
@@ -841,7 +1046,8 @@ function AdminOrders() {
 
                                 {isUpdating
                                   ? 'Updating...'
-                                  : 'Update'}
+                                  : 'Update'
+                                }
 
                               </button>
 
@@ -854,6 +1060,7 @@ function AdminOrders() {
                       </tr>
 
                     )
+
                   })}
 
                 </tbody>

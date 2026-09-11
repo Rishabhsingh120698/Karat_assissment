@@ -48,13 +48,17 @@ function Cart() {
   if (cartItems.length === 0) {
 
     return (
-      <main className="page-container">
+      <main className="cart-page">
 
         <div className="empty-cart">
 
           <div className="empty-cart-icon">
             🛒
           </div>
+
+          <span className="cart-page-label">
+            PROJECT ORBIT
+          </span>
 
           <h1 className="page-title">
             Your Cart is Empty
@@ -71,7 +75,7 @@ function Cart() {
               navigate('/products')
             }
           >
-            Start Shopping
+            Start Shopping →
           </button>
 
         </div>
@@ -81,189 +85,301 @@ function Cart() {
   }
 
   return (
-    <main className="page-container">
+    <main className="cart-page">
 
-      <div className="cart-header">
+      <div className="cart-container">
 
-        <div>
-          <h1 className="page-title">
-            Shopping Cart
-          </h1>
+        <div className="cart-header">
 
-          <p className="page-subtitle">
-            Review your items before checkout.
-          </p>
-        </div>
+          <div>
 
-        <div className="cart-summary-badge">
-
-          <span>
-            {cartItems.length}
-          </span>
-
-          <small>
-            {cartItems.length === 1
-              ? 'Product'
-              : 'Products'}
-          </small>
-
-        </div>
-
-      </div>
-
-      <div className="cart-layout">
-
-        <section className="cart-items-section">
-
-          {cartItems.map(item => {
-
-            const subtotal =
-              item.price * item.quantity
-
-            return (
-              <article
-                className="cart-item-card"
-                key={item.productId}
-              >
-
-                <div className="cart-item-info">
-
-                  <span className="product-category">
-                    PRODUCT
-                  </span>
-
-                  <h2 className="cart-item-name">
-                    {item.name}
-                  </h2>
-
-                  <p className="cart-item-price">
-                    ₹{Number(item.price).toFixed(2)}
-                    <span>
-                      {' '}per unit
-                    </span>
-                  </p>
-
-                </div>
-
-                <div className="cart-item-actions">
-
-                  <div className="cart-quantity-control">
-
-                    <button
-                      className="quantity-button"
-                      onClick={() =>
-                        decreaseQuantity(
-                          item.productId
-                        )
-                      }
-                      disabled={
-                        item.quantity <= 1
-                      }
-                    >
-                      -
-                    </button>
-
-                    <span className="cart-quantity">
-                      {item.quantity}
-                    </span>
-
-                    <button
-                      className="quantity-button"
-                      onClick={() =>
-                        increaseQuantity(
-                          item.productId
-                        )
-                      }
-                    >
-                      +
-                    </button>
-
-                  </div>
-
-                  <p className="cart-item-subtotal">
-                    ₹{subtotal.toFixed(2)}
-                  </p>
-
-                  <button
-                    className="remove-button"
-                    onClick={() =>
-                      removeFromCart(
-                        item.productId
-                      )
-                    }
-                  >
-                    Remove
-                  </button>
-
-                </div>
-
-              </article>
-            )
-          })}
-
-        </section>
-
-        <aside className="cart-summary-card">
-
-          <h2>
-            Order Summary
-          </h2>
-
-          <div className="summary-row">
-
-            <span>
-              Products
+            <span className="cart-page-label">
+              PROJECT ORBIT
             </span>
+
+            <h1 className="page-title">
+              Shopping Cart
+            </h1>
+
+            <p className="page-subtitle">
+              Review your items before checkout.
+            </p>
+
+          </div>
+
+          <div className="cart-summary-badge">
 
             <span>
               {cartItems.length}
             </span>
 
-          </div>
-
-          <div className="summary-row">
-
-            <span>
-              Total Quantity
-            </span>
-
-            <span>
-              {totalQuantity}
-            </span>
+            <small>
+              {cartItems.length === 1
+                ? 'Product'
+                : 'Products'}
+            </small>
 
           </div>
 
-          <div className="summary-divider" />
+        </div>
 
-          <div className="summary-total">
+        <div className="cart-layout">
 
-            <span>
-              Total
-            </span>
+          <section className="cart-items-section">
 
-            <strong>
-              ₹{totalAmount.toFixed(2)}
-            </strong>
+            <div className="cart-section-heading">
 
-          </div>
+              <h2>
+                Your Items
+              </h2>
 
-          <button
-            className="checkout-button"
-            onClick={handleCheckout}
-          >
-            Proceed to Checkout
-          </button>
+              <span>
+                {totalQuantity} items
+              </span>
 
-          <button
-            className="continue-shopping-button"
-            onClick={() =>
-              navigate('/products')
-            }
-          >
-            Continue Shopping
-          </button>
+            </div>
 
-        </aside>
+            {cartItems.map(item => {
+
+              const subtotal =
+                item.price * item.quantity
+
+              return (
+                <article
+                  className="cart-item-card"
+                  key={item.productId}
+                >
+
+                  <div className="cart-item-image">
+
+                    {item.imageUrl ? (
+
+                      <img
+                        src={item.imageUrl}
+                        alt={item.name}
+                      />
+
+                    ) : (
+
+                      <div className="cart-image-placeholder">
+
+                        <span>
+                          ORBIT
+                        </span>
+
+                        <strong>
+                          PRODUCT
+                        </strong>
+
+                      </div>
+
+                    )}
+
+                  </div>
+
+                  <div className="cart-item-info">
+
+                    <span className="product-category">
+                      PRODUCT
+                    </span>
+
+                    <h2 className="cart-item-name">
+                      {item.name}
+                    </h2>
+
+                    <p className="cart-item-price">
+                      ₹{Number(item.price).toLocaleString(
+                        'en-IN',
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2
+                        }
+                      )}
+
+                      <span>
+                        per unit
+                      </span>
+                    </p>
+
+                  </div>
+
+                  <div className="cart-item-actions">
+
+                    <div className="cart-quantity-control">
+
+                      <button
+                        className="quantity-button"
+                        onClick={() =>
+                          decreaseQuantity(
+                            item.productId
+                          )
+                        }
+                        disabled={
+                          item.quantity <= 1
+                        }
+                      >
+                        −
+                      </button>
+
+                      <span className="cart-quantity">
+                        {item.quantity}
+                      </span>
+
+                      <button
+                        className="quantity-button"
+                        onClick={() =>
+                          increaseQuantity(
+                            item.productId
+                          )
+                        }
+                      >
+                        +
+                      </button>
+
+                    </div>
+
+                    <div className="cart-item-total">
+
+                      <span>
+                        Subtotal
+                      </span>
+
+                      <strong>
+                        ₹{subtotal.toLocaleString(
+                          'en-IN',
+                          {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                          }
+                        )}
+                      </strong>
+
+                    </div>
+
+                    <button
+                      className="remove-button"
+                      onClick={() =>
+                        removeFromCart(
+                          item.productId
+                        )
+                      }
+                    >
+                      Remove
+                    </button>
+
+                  </div>
+
+                </article>
+              )
+            })}
+
+          </section>
+
+          <aside className="cart-summary-card">
+
+            <div className="cart-summary-heading">
+
+              <span>
+                ORDER SUMMARY
+              </span>
+
+              <h2>
+                Your Order
+              </h2>
+
+            </div>
+
+            <div className="summary-row">
+
+              <span>
+                Products
+              </span>
+
+              <span>
+                {cartItems.length}
+              </span>
+
+            </div>
+
+            <div className="summary-row">
+
+              <span>
+                Total Quantity
+              </span>
+
+              <span>
+                {totalQuantity}
+              </span>
+
+            </div>
+
+            <div className="summary-row">
+
+              <span>
+                Delivery
+              </span>
+
+              <span className="free-delivery">
+                FREE
+              </span>
+
+            </div>
+
+            <div className="summary-divider" />
+
+            <div className="summary-total">
+
+              <span>
+                Total
+              </span>
+
+              <strong>
+                ₹{totalAmount.toLocaleString(
+                  'en-IN',
+                  {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  }
+                )}
+              </strong>
+
+            </div>
+
+            <button
+              className="checkout-button"
+              onClick={handleCheckout}
+            >
+              Proceed to Checkout
+              <span>
+                →
+              </span>
+            </button>
+
+            <button
+              className="continue-shopping-button"
+              onClick={() =>
+                navigate('/products')
+              }
+            >
+              ← Continue Shopping
+            </button>
+
+            <div className="cart-secure-message">
+
+              <span>
+                🔒
+              </span>
+
+              <p>
+                Secure checkout powered by
+                Project Orbit.
+              </p>
+
+            </div>
+
+          </aside>
+
+        </div>
 
       </div>
 

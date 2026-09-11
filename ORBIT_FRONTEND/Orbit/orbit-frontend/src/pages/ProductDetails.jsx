@@ -36,10 +36,11 @@ function ProductDetails() {
 
         const inventoryData =
           await getInventoryByProductId(id)
-          console.log(
-  'Inventory data received:',
-  inventoryData
-)
+
+        console.log(
+          'Inventory data received:',
+          inventoryData
+        )
 
         setProduct(productData)
 
@@ -151,6 +152,15 @@ function ProductDetails() {
     )
   }
 
+  const availableStock =
+    inventory
+      ? Number(inventory.availableQuantity || 0)
+      : null
+
+  const isInStock =
+    availableStock !== null &&
+    availableStock > 0
+
   return (
     <main className="product-details-page">
 
@@ -182,6 +192,34 @@ function ProductDetails() {
 
         <div className="product-details-card">
 
+          <div className="product-details-image-section">
+
+            {product.imageUrl ? (
+
+              <img
+                src={product.imageUrl}
+                alt={product.name}
+                className="product-details-image"
+              />
+
+            ) : (
+
+              <div className="product-details-image-placeholder">
+
+                <span>
+                  PROJECT ORBIT
+                </span>
+
+                <strong>
+                  PRODUCT
+                </strong>
+
+              </div>
+
+            )}
+
+          </div>
+
           <div className="product-details-content">
 
             <div className="product-details-info">
@@ -195,7 +233,8 @@ function ProductDetails() {
               </h2>
 
               <p className="product-description">
-                {product.description}
+                {product.description ||
+                  'Premium quality product from Project Orbit.'}
               </p>
 
               <div className="product-details-price">
@@ -210,6 +249,40 @@ function ProductDetails() {
 
               </div>
 
+              <div className="product-details-stock-card">
+
+                <span
+                  className={
+                    isInStock
+                      ? 'product-details-stock-dot stock-available'
+                      : 'product-details-stock-dot stock-unavailable'
+                  }
+                />
+
+                <div>
+
+                  <strong>
+                    {inventory
+                      ? isInStock
+                        ? 'In Stock'
+                        : 'Out of Stock'
+                      : 'Stock Unavailable'
+                    }
+                  </strong>
+
+                  <span>
+                    {inventory
+                      ? isInStock
+                        ? `${availableStock} units available`
+                        : 'This product is currently unavailable.'
+                      : 'Inventory information could not be loaded.'
+                    }
+                  </span>
+
+                </div>
+
+              </div>
+
               <div className="product-details-grid">
 
                 <div className="product-detail-item">
@@ -219,7 +292,7 @@ function ProductDetails() {
                   </span>
 
                   <span className="product-detail-value">
-                    {product.id}
+                    #{product.id}
                   </span>
 
                 </div>
@@ -231,12 +304,10 @@ function ProductDetails() {
                   </span>
 
                   <span className="product-detail-value">
-
                     {inventory
-                      ? inventory.availableQuantity
+                      ? availableStock
                       : 'Unavailable'
                     }
-
                   </span>
 
                 </div>
@@ -244,7 +315,7 @@ function ProductDetails() {
                 <div className="product-detail-item">
 
                   <span className="product-detail-label">
-                    Status
+                    Product Status
                   </span>
 
                   <span
@@ -261,6 +332,17 @@ function ProductDetails() {
                   </span>
 
                 </div>
+
+              </div>
+
+              <div className="product-details-actions">
+
+                <Link
+                  to="/products"
+                  className="product-details-back-button"
+                >
+                  ← Continue Shopping
+                </Link>
 
               </div>
 

@@ -74,15 +74,15 @@ function Login() {
 
       loginUser(response)
 
-if (response.role === 'ADMIN') {
+      if (response.role === 'ADMIN') {
 
-  navigate('/admin')
+        navigate('/admin')
 
-} else {
+      } else {
 
-  navigate('/products')
+        navigate('/products')
 
-}
+      }
 
     } catch (error) {
 
@@ -104,13 +104,23 @@ if (response.role === 'ADMIN') {
   }
 
   return (
+
     <main className="auth-page">
 
       <div className="auth-container">
 
+        {/* LEFT BRAND PANEL */}
+
         <section className="auth-brand-panel">
 
+          <div className="auth-brand-decoration auth-decoration-one" />
+          <div className="auth-brand-decoration auth-decoration-two" />
+
           <div className="auth-brand-content">
+
+            <div className="auth-orbit-mark">
+              O
+            </div>
 
             <span className="auth-brand-label">
               PROJECT ORBIT
@@ -129,6 +139,7 @@ if (response.role === 'ADMIN') {
             <div className="auth-feature-list">
 
               <div className="auth-feature">
+
                 <span className="auth-feature-icon">
                   ✓
                 </span>
@@ -136,9 +147,11 @@ if (response.role === 'ADMIN') {
                 <span>
                   Browse products
                 </span>
+
               </div>
 
               <div className="auth-feature">
+
                 <span className="auth-feature-icon">
                   ✓
                 </span>
@@ -146,9 +159,11 @@ if (response.role === 'ADMIN') {
                 <span>
                   Manage your cart
                 </span>
+
               </div>
 
               <div className="auth-feature">
+
                 <span className="auth-feature-icon">
                   ✓
                 </span>
@@ -156,13 +171,24 @@ if (response.role === 'ADMIN') {
                 <span>
                   Track your orders
                 </span>
+
               </div>
 
+            </div>
+
+            <div className="auth-brand-footer">
+              <span />
+              <small>
+                YOUR SHOPPING JOURNEY STARTS HERE
+              </small>
             </div>
 
           </div>
 
         </section>
+
+
+        {/* RIGHT FORM PANEL */}
 
         <section className="auth-form-panel">
 
@@ -171,7 +197,11 @@ if (response.role === 'ADMIN') {
             <div className="auth-form-header">
 
               <span className="auth-mobile-brand">
-                Project Orbit
+                PROJECT ORBIT
+              </span>
+
+              <span className="auth-form-eyebrow">
+                ACCOUNT ACCESS
               </span>
 
               <h2>
@@ -185,7 +215,11 @@ if (response.role === 'ADMIN') {
 
             </div>
 
+
+            {/* ERROR */}
+
             {error && (
+
               <div
                 className="auth-error"
                 role="alert"
@@ -200,7 +234,11 @@ if (response.role === 'ADMIN') {
                 </span>
 
               </div>
+
             )}
+
+
+            {/* LOGIN FORM */}
 
             <form
               onSubmit={handleSubmit}
@@ -213,22 +251,31 @@ if (response.role === 'ADMIN') {
                   Username
                 </label>
 
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  value={username}
-                  onChange={(event) =>
-                    setUsername(
-                      event.target.value
-                    )
-                  }
-                  placeholder="Enter your username"
-                  autoComplete="username"
-                  disabled={loading}
-                />
+                <div className="auth-input-wrapper">
+
+                  <span className="auth-input-icon">
+                    @
+                  </span>
+
+                  <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    value={username}
+                    onChange={(event) =>
+                      setUsername(
+                        event.target.value
+                      )
+                    }
+                    placeholder="Enter your username"
+                    autoComplete="username"
+                    disabled={loading}
+                  />
+
+                </div>
 
               </div>
+
 
               <div className="form-field">
 
@@ -236,22 +283,31 @@ if (response.role === 'ADMIN') {
                   Password
                 </label>
 
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={password}
-                  onChange={(event) =>
-                    setPassword(
-                      event.target.value
-                    )
-                  }
-                  placeholder="Enter your password"
-                  autoComplete="current-password"
-                  disabled={loading}
-                />
+                <div className="auth-input-wrapper">
+
+                  <span className="auth-input-icon">
+                    •
+                  </span>
+
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    value={password}
+                    onChange={(event) =>
+                      setPassword(
+                        event.target.value
+                      )
+                    }
+                    placeholder="Enter your password"
+                    autoComplete="current-password"
+                    disabled={loading}
+                  />
+
+                </div>
 
               </div>
+
 
               <button
                 type="submit"
@@ -260,23 +316,42 @@ if (response.role === 'ADMIN') {
               >
 
                 {loading ? (
+
                   <>
+
                     <span className="button-spinner" />
+
                     Signing in...
+
                   </>
+
                 ) : (
-                  'Sign In'
+
+                  <>
+
+                    Sign In
+
+                    <span className="auth-submit-arrow">
+                      →
+                    </span>
+
+                  </>
+
                 )}
 
               </button>
 
             </form>
 
+
             <div className="auth-divider">
+
               <span>
                 OR
               </span>
+
             </div>
+
 
             <p className="auth-register-text">
 
@@ -289,6 +364,7 @@ if (response.role === 'ADMIN') {
               </Link>
 
             </p>
+
 
             <Link
               to="/"
@@ -304,6 +380,7 @@ if (response.role === 'ADMIN') {
       </div>
 
     </main>
+
   )
 }
 

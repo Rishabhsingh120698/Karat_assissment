@@ -135,13 +135,23 @@ function Register() {
   }
 
   return (
+
     <main className="auth-page">
 
       <div className="auth-container">
 
+        {/* LEFT BRAND PANEL */}
+
         <section className="auth-brand-panel">
 
+          <div className="auth-brand-decoration auth-decoration-one" />
+          <div className="auth-brand-decoration auth-decoration-two" />
+
           <div className="auth-brand-content">
+
+            <div className="auth-orbit-mark">
+              O
+            </div>
 
             <span className="auth-brand-label">
               PROJECT ORBIT
@@ -197,9 +207,19 @@ function Register() {
 
             </div>
 
+            <div className="auth-brand-footer">
+              <span />
+              <small>
+                CREATE • SHOP • DISCOVER
+              </small>
+            </div>
+
           </div>
 
         </section>
+
+
+        {/* RIGHT FORM PANEL */}
 
         <section className="auth-form-panel">
 
@@ -208,7 +228,11 @@ function Register() {
             <div className="auth-form-header">
 
               <span className="auth-mobile-brand">
-                Project Orbit
+                PROJECT ORBIT
+              </span>
+
+              <span className="auth-form-eyebrow">
+                GET STARTED
               </span>
 
               <h2>
@@ -221,6 +245,9 @@ function Register() {
               </p>
 
             </div>
+
+
+            {/* ERROR */}
 
             {error && (
 
@@ -241,6 +268,9 @@ function Register() {
 
             )}
 
+
+            {/* SUCCESS */}
+
             {success && (
 
               <div
@@ -260,6 +290,9 @@ function Register() {
 
             )}
 
+
+            {/* REGISTER FORM */}
+
             <form
               onSubmit={handleSubmit}
               className="auth-form"
@@ -271,22 +304,31 @@ function Register() {
                   Username
                 </label>
 
-                <input
-                  id="register-username"
-                  name="username"
-                  type="text"
-                  value={username}
-                  onChange={(event) =>
-                    setUsername(
-                      event.target.value
-                    )
-                  }
-                  placeholder="Choose a username"
-                  autoComplete="username"
-                  disabled={loading}
-                />
+                <div className="auth-input-wrapper">
+
+                  <span className="auth-input-icon">
+                    @
+                  </span>
+
+                  <input
+                    id="register-username"
+                    name="username"
+                    type="text"
+                    value={username}
+                    onChange={(event) =>
+                      setUsername(
+                        event.target.value
+                      )
+                    }
+                    placeholder="Choose a username"
+                    autoComplete="username"
+                    disabled={loading}
+                  />
+
+                </div>
 
               </div>
+
 
               <div className="form-field">
 
@@ -294,22 +336,35 @@ function Register() {
                   Password
                 </label>
 
-                <input
-                  id="register-password"
-                  name="password"
-                  type="password"
-                  value={password}
-                  onChange={(event) =>
-                    setPassword(
-                      event.target.value
-                    )
-                  }
-                  placeholder="Create a password"
-                  autoComplete="new-password"
-                  disabled={loading}
-                />
+                <div className="auth-input-wrapper">
+
+                  <span className="auth-input-icon">
+                    •
+                  </span>
+
+                  <input
+                    id="register-password"
+                    name="password"
+                    type="password"
+                    value={password}
+                    onChange={(event) =>
+                      setPassword(
+                        event.target.value
+                      )
+                    }
+                    placeholder="Create a password"
+                    autoComplete="new-password"
+                    disabled={loading}
+                  />
+
+                </div>
+
+                <span className="auth-field-hint">
+                  Minimum 6 characters
+                </span>
 
               </div>
+
 
               <div className="form-field">
 
@@ -317,22 +372,31 @@ function Register() {
                   Confirm Password
                 </label>
 
-                <input
-                  id="confirm-password"
-                  name="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(event) =>
-                    setConfirmPassword(
-                      event.target.value
-                    )
-                  }
-                  placeholder="Re-enter your password"
-                  autoComplete="new-password"
-                  disabled={loading}
-                />
+                <div className="auth-input-wrapper">
+
+                  <span className="auth-input-icon">
+                    •
+                  </span>
+
+                  <input
+                    id="confirm-password"
+                    name="confirmPassword"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(event) =>
+                      setConfirmPassword(
+                        event.target.value
+                      )
+                    }
+                    placeholder="Re-enter your password"
+                    autoComplete="new-password"
+                    disabled={loading}
+                  />
+
+                </div>
 
               </div>
+
 
               <button
                 type="submit"
@@ -341,24 +405,42 @@ function Register() {
               >
 
                 {loading ? (
+
                   <>
+
                     <span className="button-spinner" />
 
                     Creating Account...
+
                   </>
+
                 ) : (
-                  'Create Account'
+
+                  <>
+
+                    Create Account
+
+                    <span className="auth-submit-arrow">
+                      →
+                    </span>
+
+                  </>
+
                 )}
 
               </button>
 
             </form>
 
+
             <div className="auth-divider">
+
               <span>
                 OR
               </span>
+
             </div>
+
 
             <p className="auth-register-text">
 
@@ -371,6 +453,7 @@ function Register() {
               </Link>
 
             </p>
+
 
             <Link
               to="/"
@@ -386,6 +469,7 @@ function Register() {
       </div>
 
     </main>
+
   )
 }
 

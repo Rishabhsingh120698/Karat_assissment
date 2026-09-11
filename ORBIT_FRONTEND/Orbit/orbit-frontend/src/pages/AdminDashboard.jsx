@@ -7,35 +7,106 @@ function AdminDashboard() {
 
       <div className="admin-dashboard-container">
 
+        {/* =================================================
+            HEADER
+        ================================================= */}
+
         <div className="admin-dashboard-header">
 
-          <span className="admin-dashboard-label">
-            PROJECT ORBIT
-          </span>
+          <div>
 
-          <h1>
-            Admin Dashboard
-          </h1>
+            <span className="admin-dashboard-label">
+              PROJECT ORBIT • ADMIN
+            </span>
+
+            <h1>
+              Admin Dashboard
+            </h1>
+
+            <p>
+              Manage products, inventory, and customer
+              orders from one place.
+            </p>
+
+          </div>
+
+          <div className="admin-dashboard-badge">
+
+            <span className="admin-dashboard-badge-icon">
+              ✓
+            </span>
+
+            <div>
+
+              <strong>
+                Administrator
+              </strong>
+
+              <small>
+                Full access
+              </small>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        {/* =================================================
+            MANAGEMENT CARDS
+        ================================================= */}
+
+        <div className="admin-dashboard-section-heading">
+
+          <div>
+
+            <span>
+              MANAGEMENT
+            </span>
+
+            <h2>
+              Control Center
+            </h2>
+
+          </div>
 
           <p>
-            Manage products, inventory, and customer
-            orders from one place.
+            Select an area to manage
           </p>
 
         </div>
 
+
         <div className="admin-dashboard-grid">
+
+
+          {/* =================================================
+              PRODUCTS
+          ================================================= */}
 
           <Link
             to="/admin/products"
             className="admin-dashboard-card"
           >
 
-            <div className="admin-card-icon">
-              📦
+            <div className="admin-card-top">
+
+              <div className="admin-card-icon">
+                📦
+              </div>
+
+              <span className="admin-card-arrow">
+                →
+              </span>
+
             </div>
 
             <div className="admin-card-content">
+
+              <span className="admin-card-label">
+                CATALOG
+              </span>
 
               <h2>
                 Product Management
@@ -47,23 +118,41 @@ function AdminDashboard() {
               </p>
 
               <span className="admin-card-link">
-                Manage Products →
+                Manage Products
+                <span>→</span>
               </span>
 
             </div>
 
           </Link>
 
+
+          {/* =================================================
+              INVENTORY
+          ================================================= */}
+
           <Link
             to="/admin/inventory"
             className="admin-dashboard-card"
           >
 
-            <div className="admin-card-icon">
-              📊
+            <div className="admin-card-top">
+
+              <div className="admin-card-icon">
+                📊
+              </div>
+
+              <span className="admin-card-arrow">
+                →
+              </span>
+
             </div>
 
             <div className="admin-card-content">
+
+              <span className="admin-card-label">
+                STOCK CONTROL
+              </span>
 
               <h2>
                 Inventory Management
@@ -75,23 +164,41 @@ function AdminDashboard() {
               </p>
 
               <span className="admin-card-link">
-                Manage Inventory →
+                Manage Inventory
+                <span>→</span>
               </span>
 
             </div>
 
           </Link>
 
+
+          {/* =================================================
+              ORDERS
+          ================================================= */}
+
           <Link
             to="/admin/orders"
             className="admin-dashboard-card"
           >
 
-            <div className="admin-card-icon">
-              🛒
+            <div className="admin-card-top">
+
+              <div className="admin-card-icon">
+                🛒
+              </div>
+
+              <span className="admin-card-arrow">
+                →
+              </span>
+
             </div>
 
             <div className="admin-card-content">
+
+              <span className="admin-card-label">
+                OPERATIONS
+              </span>
 
               <h2>
                 Order Management
@@ -103,7 +210,8 @@ function AdminDashboard() {
               </p>
 
               <span className="admin-card-link">
-                Manage Orders →
+                Manage Orders
+                <span>→</span>
               </span>
 
             </div>
@@ -112,13 +220,22 @@ function AdminDashboard() {
 
         </div>
 
+
+        {/* =================================================
+            ADMIN ACCESS INFORMATION
+        ================================================= */}
+
         <div className="admin-dashboard-info">
 
           <div className="admin-info-icon">
             ✓
           </div>
 
-          <div>
+          <div className="admin-info-content">
+
+            <span>
+              SECURITY
+            </span>
 
             <h3>
               Administrator Access
@@ -131,6 +248,11 @@ function AdminDashboard() {
               features.
             </p>
 
+          </div>
+
+          <div className="admin-info-status">
+            <span></span>
+            Protected
           </div>
 
         </div>

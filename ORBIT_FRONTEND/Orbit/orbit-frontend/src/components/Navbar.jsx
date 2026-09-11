@@ -45,7 +45,15 @@ function Navbar() {
         <div className="navbar-brand">
 
           <Link to="/">
-            Project Orbit
+
+            <span className="navbar-brand-orbit">
+              O
+            </span>
+
+            <span className="navbar-brand-text">
+              Project Orbit
+            </span>
+
           </Link>
 
         </div>
@@ -88,9 +96,11 @@ function Navbar() {
 
           <Link
             to="/cart"
-            className="navbar-link"
+            className="navbar-link navbar-cart-link"
           >
-            Cart
+            <span>
+              Cart
+            </span>
           </Link>
 
 
@@ -114,11 +124,12 @@ function Navbar() {
           {/* ADMIN DASHBOARD                                 */}
           {/* =============================================== */}
 
-          {isAuthenticated && role === 'ADMIN' && (
+          {isAuthenticated &&
+            role === 'ADMIN' && (
 
             <Link
               to="/admin"
-              className="navbar-link"
+              className="navbar-link navbar-admin-link"
             >
               Admin Dashboard
             </Link>
@@ -136,7 +147,7 @@ function Navbar() {
 
               <Link
                 to="/login"
-                className="navbar-link"
+                className="navbar-link navbar-login-link"
               >
                 Login
               </Link>
@@ -144,7 +155,7 @@ function Navbar() {
 
               <Link
                 to="/register"
-                className="navbar-link"
+                className="navbar-register-button"
               >
                 Register
               </Link>
@@ -162,18 +173,29 @@ function Navbar() {
 
             <>
 
-              <span className="navbar-user">
+              <div className="navbar-user-area">
 
-                Welcome, {username}
+                <div className="navbar-user-avatar">
+                  {username
+                    ? username
+                        .charAt(0)
+                        .toUpperCase()
+                    : 'U'}
+                </div>
 
-              </span>
+                <div className="navbar-user-details">
 
+                  <span className="navbar-user">
+                    {username}
+                  </span>
 
-              <span className="navbar-role">
+                  <span className="navbar-role">
+                    {role}
+                  </span>
 
-                ({role})
+                </div>
 
-              </span>
+              </div>
 
 
               {/* ========================================= */}
