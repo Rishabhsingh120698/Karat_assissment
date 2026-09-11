@@ -27,9 +27,37 @@ async function cancelOrder(orderId) {
   )
 }
 
+// ============================================================
+// ADMIN OPERATIONS
+// ============================================================
+
+async function getAllOrders() {
+  return apiRequest('/api/orders/admin')
+}
+
+async function updateOrderStatus(
+  orderId,
+  status
+) {
+  return apiRequest(
+    `/api/orders/${orderId}/status`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        status: status
+      })
+    }
+  )
+}
+
 export {
   getMyOrders,
   getOrderById,
   createOrder,
-  cancelOrder
+  cancelOrder,
+  getAllOrders,
+  updateOrderStatus
 }

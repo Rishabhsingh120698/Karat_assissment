@@ -1,9 +1,19 @@
 package com.example.orbit_order_service.service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.example.orbit_order_service.client.InventoryClient;
 import com.example.orbit_order_service.client.NotificationClient;
 import com.example.orbit_order_service.client.PaymentClient;
 import com.example.orbit_order_service.client.ProductClient;
+import com.example.orbit_order_service.dto.AdminOrderStatusRequest;
 import com.example.orbit_order_service.dto.OrderItemRequest;
 import com.example.orbit_order_service.dto.OrderItemResponse;
 import com.example.orbit_order_service.dto.OrderRequest;
@@ -13,15 +23,6 @@ import com.example.orbit_order_service.model.Order;
 import com.example.orbit_order_service.model.OrderItem;
 import com.example.orbit_order_service.model.OrderStatus;
 import com.example.orbit_order_service.repository.OrderRepository;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @Service
 public class OrderService {
@@ -203,8 +204,8 @@ public class OrderService {
             /*
              * Payment failed.
              *
-             * Release the inventory that
-             * was already reserved.
+             * Inventory was already reserved,
+             * so release the reservation.
              */
 
             for (OrderItem orderItem :
@@ -289,6 +290,10 @@ public class OrderService {
                 confirmedOrder);
     }
 
+    // ============================================================
+    // CUSTOMER OPERATIONS
+    // ============================================================
+
     public List<OrderResponse> getOrdersByUser(
             Long userId) {
 
@@ -369,23 +374,43 @@ public class OrderService {
                             + order.getStatus());
         }
 
-        // 4. Release inventory
+        /*
+         * 4. Handle inventory differently
+         *    based on the order status.
+         *
+         * CREATED:
+         * Inventory is still reserved.
+         * Therefore release the reservation.
+         *
+         * CONFIRMED:
+         * Payment succeeded and inventory
+         * was already finalized.
+         * Therefore we must RESTOCK the product.
+         */
 
-        for (OrderItem orderItem :
-                order.getOrderItems()) {
+        if (order.getStatus()
+                == OrderStatus.CREATED) {
 
-            inventoryClient.releaseStock(
-                    orderItem.getProductId(),
-                    orderItem.getQuantity());
+            for (OrderItem orderItem :
+                    order.getOrderItems()) {
+
+                inventoryClient.releaseStock(
+                        orderItem.getProductId(),
+                        orderItem.getQuantity());
+            }
         }
 
-        // 5. Find payment for this order
+        /*
+         * 5. Find payment for this order
+         */
 
         PaymentClient.PaymentResponse payment =
                 paymentClient.getPaymentByOrderId(
                         orderId);
 
-        // 6. Refund payment if successful
+        /*
+         * 6. Refund successful payment
+         */
 
         if (payment != null
                 && "SUCCESS".equals(
@@ -395,7 +420,25 @@ public class OrderService {
                     payment.getId());
         }
 
-        // 7. Change order status
+        /*
+         * 7. If order was CONFIRMED,
+         *    payment has been refunded and
+         *    inventory must be added back.
+         */
+
+        if (order.getStatus()
+                == OrderStatus.CONFIRMED) {
+
+            for (OrderItem orderItem :
+                    order.getOrderItems()) {
+
+                inventoryClient.increaseStock(
+                        orderItem.getProductId(),
+                        orderItem.getQuantity());
+            }
+        }
+
+        // 8. Change order status
 
         order.setStatus(
                 OrderStatus.CANCELLED);
@@ -406,7 +449,7 @@ public class OrderService {
         Order cancelledOrder =
                 orderRepository.save(order);
 
-        // 8. Create cancellation notification
+        // 9. Create cancellation notification
 
         String notificationMessage =
                 "Your order "
@@ -423,6 +466,183 @@ public class OrderService {
         return mapToResponse(
                 cancelledOrder);
     }
+
+    // ============================================================
+    // ADMIN OPERATIONS
+    // ============================================================
+
+    /**
+     * Returns all orders in the system.
+     *
+     * This method is intended for ADMIN users.
+     */
+    public List<OrderResponse> getAllOrders() {
+
+        return orderRepository
+                .findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    /**
+     * Updates the status of an order.
+     *
+     * This method is intended for ADMIN users.
+     *
+     * Valid transitions:
+     *
+     * CREATED     -> CONFIRMED
+     * CONFIRMED   -> PROCESSING
+     * PROCESSING  -> SHIPPED
+     * SHIPPED     -> DELIVERED
+     */
+    @Transactional
+    public OrderResponse updateOrderStatus(
+            Long orderId,
+            AdminOrderStatusRequest request) {
+
+        // 1. Find order
+
+        Order order =
+                orderRepository.findById(orderId)
+                        .orElseThrow(() ->
+                                new OrderNotFoundException(
+                                        "Order not found with id: "
+                                                + orderId));
+
+        // 2. Get current status
+
+        OrderStatus currentStatus =
+                order.getStatus();
+
+        OrderStatus newStatus =
+                request.getStatus();
+
+        // 3. Do not allow changing to the same status
+
+        if (currentStatus == newStatus) {
+
+            throw new IllegalStateException(
+                    "Order is already in status: "
+                            + currentStatus);
+        }
+
+        // 4. CANCELLED is handled through
+        //    the cancellation workflow.
+
+        if (newStatus == OrderStatus.CANCELLED) {
+
+            throw new IllegalStateException(
+                    "Use the cancellation workflow to cancel an order.");
+        }
+
+        // 5. Validate status transition
+
+        validateStatusTransition(
+                currentStatus,
+                newStatus);
+
+        // 6. Update status
+
+        order.setStatus(
+                newStatus);
+
+        order.setUpdatedAt(
+                LocalDateTime.now());
+
+        Order updatedOrder =
+                orderRepository.save(order);
+
+        // 7. Create notification
+
+        String notificationMessage =
+                "Your order "
+                        + updatedOrder
+                                .getOrderNumber()
+                        + " status has been updated to "
+                        + newStatus
+                        + ".";
+
+        notificationClient.createNotification(
+                updatedOrder.getUserId(),
+                updatedOrder.getId(),
+                "ORDER_CONFIRMED",
+                notificationMessage);
+
+        return mapToResponse(
+                updatedOrder);
+    }
+
+    /**
+     * Validates the order status state machine.
+     */
+    private void validateStatusTransition(
+            OrderStatus currentStatus,
+            OrderStatus newStatus) {
+
+        boolean validTransition = false;
+
+        switch (currentStatus) {
+
+            case CREATED:
+
+                validTransition =
+                        newStatus == OrderStatus.CONFIRMED;
+
+                break;
+
+            case CONFIRMED:
+
+                validTransition =
+                        newStatus == OrderStatus.PROCESSING;
+
+                break;
+
+            case PROCESSING:
+
+                validTransition =
+                        newStatus == OrderStatus.SHIPPED;
+
+                break;
+
+            case SHIPPED:
+
+                validTransition =
+                        newStatus == OrderStatus.DELIVERED;
+
+                break;
+
+            case DELIVERED:
+
+                validTransition = false;
+
+                break;
+
+            case CANCELLED:
+
+                validTransition = false;
+
+                break;
+
+            default:
+
+                validTransition = false;
+        }
+
+        if (!validTransition) {
+
+            throw new IllegalStateException(
+                    "Invalid order status transition: "
+                            + currentStatus
+                            + " -> "
+                            + newStatus);
+        }
+    }
+
+    // ============================================================
+    // COMMON METHODS
+    // ============================================================
 
     private void validateOrderOwnership(
             Order order,

@@ -74,7 +74,15 @@ function Login() {
 
       loginUser(response)
 
-      navigate('/products')
+if (response.role === 'ADMIN') {
+
+  navigate('/admin')
+
+} else {
+
+  navigate('/products')
+
+}
 
     } catch (error) {
 

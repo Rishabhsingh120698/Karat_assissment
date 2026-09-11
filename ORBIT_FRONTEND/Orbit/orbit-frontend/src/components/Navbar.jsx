@@ -17,17 +17,30 @@ function Navbar() {
 
   const navigate = useNavigate()
 
+
+  // =========================================================
+  // LOGOUT
+  // =========================================================
+
   const handleLogout = () => {
 
     logout()
 
     navigate('/')
+
   }
 
+
   return (
+
     <nav className="navbar">
 
       <div className="navbar-container">
+
+
+        {/* ================================================= */}
+        {/* BRAND                                             */}
+        {/* ================================================= */}
 
         <div className="navbar-brand">
 
@@ -37,7 +50,17 @@ function Navbar() {
 
         </div>
 
+
+        {/* ================================================= */}
+        {/* NAVIGATION LINKS                                  */}
+        {/* ================================================= */}
+
         <div className="navbar-links">
+
+
+          {/* =============================================== */}
+          {/* HOME                                            */}
+          {/* =============================================== */}
 
           <Link
             to="/"
@@ -46,12 +69,22 @@ function Navbar() {
             Home
           </Link>
 
+
+          {/* =============================================== */}
+          {/* PRODUCTS                                        */}
+          {/* =============================================== */}
+
           <Link
             to="/products"
             className="navbar-link"
           >
             Products
           </Link>
+
+
+          {/* =============================================== */}
+          {/* CART                                            */}
+          {/* =============================================== */}
 
           <Link
             to="/cart"
@@ -60,17 +93,47 @@ function Navbar() {
             Cart
           </Link>
 
+
+          {/* =============================================== */}
+          {/* MY ORDERS                                       */}
+          {/* =============================================== */}
+
           {isAuthenticated && (
+
             <Link
               to="/orders"
               className="navbar-link"
             >
               My Orders
             </Link>
+
           )}
 
+
+          {/* =============================================== */}
+          {/* ADMIN DASHBOARD                                 */}
+          {/* =============================================== */}
+
+          {isAuthenticated && role === 'ADMIN' && (
+
+            <Link
+              to="/admin"
+              className="navbar-link"
+            >
+              Admin Dashboard
+            </Link>
+
+          )}
+
+
+          {/* =============================================== */}
+          {/* LOGIN / REGISTER                                */}
+          {/* =============================================== */}
+
           {!isAuthenticated && (
+
             <>
+
               <Link
                 to="/login"
                 className="navbar-link"
@@ -78,24 +141,44 @@ function Navbar() {
                 Login
               </Link>
 
+
               <Link
                 to="/register"
                 className="navbar-link"
               >
                 Register
               </Link>
+
             </>
+
           )}
 
+
+          {/* =============================================== */}
+          {/* LOGGED-IN USER INFORMATION                      */}
+          {/* =============================================== */}
+
           {isAuthenticated && (
+
             <>
+
               <span className="navbar-user">
+
                 Welcome, {username}
+
               </span>
 
+
               <span className="navbar-role">
+
                 ({role})
+
               </span>
+
+
+              {/* ========================================= */}
+              {/* LOGOUT BUTTON                              */}
+              {/* ========================================= */}
 
               <button
                 className="navbar-button"
@@ -103,7 +186,9 @@ function Navbar() {
               >
                 Logout
               </button>
+
             </>
+
           )}
 
         </div>
@@ -111,7 +196,9 @@ function Navbar() {
       </div>
 
     </nav>
+
   )
+
 }
 
 export default Navbar

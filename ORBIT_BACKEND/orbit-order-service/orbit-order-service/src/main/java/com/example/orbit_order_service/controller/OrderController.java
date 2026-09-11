@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.orbit_order_service.dto.AdminOrderStatusRequest;
 import com.example.orbit_order_service.dto.OrderRequest;
 import com.example.orbit_order_service.dto.OrderResponse;
 import com.example.orbit_order_service.service.OrderService;
@@ -29,13 +30,19 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    // ============================================================
+    // CUSTOMER APIs
+    // ============================================================
+
     @PostMapping
     public ResponseEntity<OrderResponse> createOrder(
             @Valid @RequestBody OrderRequest request,
             @RequestHeader("X-USER-ID") Long userId) {
 
         OrderResponse response =
-                orderService.createOrder(userId, request);
+                orderService.createOrder(
+                        userId,
+                        request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -47,9 +54,11 @@ public class OrderController {
             @RequestHeader("X-USER-ID") Long userId) {
 
         List<OrderResponse> responses =
-                orderService.getOrdersByUser(userId);
+                orderService.getOrdersByUser(
+                        userId);
 
-        return ResponseEntity.ok(responses);
+        return ResponseEntity.ok(
+                responses);
     }
 
     @GetMapping("/{id}")
@@ -58,9 +67,12 @@ public class OrderController {
             @RequestHeader("X-USER-ID") Long userId) {
 
         OrderResponse response =
-                orderService.getOrderById(userId, id);
+                orderService.getOrderById(
+                        userId,
+                        id);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                response);
     }
 
     @GetMapping("/number/{orderNumber}")
@@ -69,9 +81,12 @@ public class OrderController {
             @RequestHeader("X-USER-ID") Long userId) {
 
         OrderResponse response =
-                orderService.getOrderByNumber(userId, orderNumber);
+                orderService.getOrderByNumber(
+                        userId,
+                        orderNumber);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                response);
     }
 
     @PatchMapping("/{id}/cancel")
@@ -80,8 +95,40 @@ public class OrderController {
             @RequestHeader("X-USER-ID") Long userId) {
 
         OrderResponse response =
-                orderService.cancelOrder(userId, id);
+                orderService.cancelOrder(
+                        userId,
+                        id);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                response);
+    }
+
+    // ============================================================
+    // ADMIN APIs
+    // ============================================================
+
+    @GetMapping("/admin")
+    public ResponseEntity<List<OrderResponse>> getAllOrders() {
+
+        List<OrderResponse> responses =
+                orderService.getAllOrders();
+
+        return ResponseEntity.ok(
+                responses);
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<OrderResponse> updateOrderStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody
+                    AdminOrderStatusRequest request) {
+
+        OrderResponse response =
+                orderService.updateOrderStatus(
+                        id,
+                        request);
+
+        return ResponseEntity.ok(
+                response);
     }
 }

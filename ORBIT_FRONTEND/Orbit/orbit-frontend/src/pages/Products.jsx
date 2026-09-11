@@ -5,6 +5,10 @@ import {
   getAllProducts
 } from '../services/productService'
 
+import {
+  getInventoryByProductId
+} from '../services/inventoryService'
+
 import ProductCard from '../components/ProductCard'
 
 function Products() {
@@ -20,31 +24,82 @@ function Products() {
 
   useEffect(() => {
 
-    getAllProducts()
-      .then(data => {
-
-        setProducts(data)
-
-        setLoading(false)
-
-      })
-      .catch(error => {
-
-        console.error(
-          'Failed to load products:',
-          error
-        )
-
-        setError(
-          error.message ||
-          'Failed to load products.'
-        )
-
-        setLoading(false)
-
-      })
+    loadProducts()
 
   }, [])
+
+  const loadProducts = async () => {
+
+    try {
+
+      setLoading(true)
+      setError('')
+
+      const productData =
+        await getAllProducts()
+
+      const productsWithInventory =
+        await Promise.all(
+          productData.map(
+            async product => {
+
+              try {
+
+                const inventory =
+                  await getInventoryByProductId(
+                    product.id
+                  )
+
+                return {
+                  ...product,
+                  availableQuantity:
+                    Number(
+                      inventory.availableQuantity || 0
+                    )
+                }
+
+              } catch (error) {
+
+                console.error(
+                  `Failed to load inventory for product ${product.id}:`,
+                  error
+                )
+
+                return {
+                  ...product,
+                  availableQuantity: 0
+                }
+              }
+            }
+          )
+        )
+
+      console.log(
+        'Products with inventory:',
+        productsWithInventory
+      )
+
+      setProducts(
+        productsWithInventory
+      )
+
+    } catch (error) {
+
+      console.error(
+        'Failed to load products:',
+        error
+      )
+
+      setError(
+        error.message ||
+        'Failed to load products.'
+      )
+
+    } finally {
+
+      setLoading(false)
+    }
+  }
 
   if (loading) {
 
@@ -92,9 +147,11 @@ function Products() {
       </p>
 
       {products.length === 0 && (
+
         <p className="loading-message">
           No products available.
         </p>
+
       )}
 
       <div className="product-grid">

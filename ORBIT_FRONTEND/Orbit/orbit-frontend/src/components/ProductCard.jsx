@@ -4,17 +4,23 @@ import CartContext from '../contexts/CartContext'
 
 function ProductCard({ product }) {
 
-  const [quantity, setQuantity] = useState(1)
+  const [quantity, setQuantity] =
+    useState(1)
 
   const {
     addToCart
   } = useContext(CartContext)
 
+  const availableQuantity =
+    Number(
+      product.availableQuantity || 0
+    )
+
   const increaseQuantity = () => {
 
     if (
       quantity <
-      product.stockQuantity
+      availableQuantity
     ) {
 
       setQuantity(
@@ -46,7 +52,7 @@ function ProductCard({ product }) {
   }
 
   const isInStock =
-    product.stockQuantity > 0
+    availableQuantity > 0
 
   return (
     <div className="product-card">
@@ -75,12 +81,15 @@ function ProductCard({ product }) {
             : 'product-stock stock-unavailable'
         }
       >
+
         {isInStock
-          ? `${product.stockQuantity} available`
+          ? `${availableQuantity} available`
           : 'Out of Stock'}
+
       </p>
 
       {isInStock && (
+
         <div className="product-actions">
 
           <div className="quantity-controls">
@@ -102,7 +111,7 @@ function ProductCard({ product }) {
               onClick={increaseQuantity}
               disabled={
                 quantity >=
-                product.stockQuantity
+                availableQuantity
               }
             >
               +
@@ -118,6 +127,7 @@ function ProductCard({ product }) {
           </button>
 
         </div>
+
       )}
 
     </div>

@@ -83,6 +83,25 @@ public class InventoryClient {
                 .toBodilessEntity();
     }
 
+    public void increaseStock(
+            Long productId,
+            Integer quantity) {
+
+        StockUpdateRequest request =
+                new StockUpdateRequest();
+
+        request.setQuantity(quantity);
+
+        restClient.patch()
+                .uri(
+                        "/api/inventory/{productId}/increase",
+                        productId
+                )
+                .body(request)
+                .retrieve()
+                .toBodilessEntity();
+    }
+
     public static class StockUpdateRequest {
 
         private Integer quantity;
@@ -94,7 +113,9 @@ public class InventoryClient {
             return quantity;
         }
 
-        public void setQuantity(Integer quantity) {
+        public void setQuantity(
+                Integer quantity) {
+
             this.quantity = quantity;
         }
     }
@@ -137,7 +158,8 @@ public class InventoryClient {
         public void setStockQuantity(
                 Integer stockQuantity) {
 
-            this.stockQuantity = stockQuantity;
+            this.stockQuantity =
+                    stockQuantity;
         }
 
         public Integer getReservedQuantity() {
