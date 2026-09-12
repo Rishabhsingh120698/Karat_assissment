@@ -9,6 +9,11 @@ import {
   deactivateProduct
 } from '../../services/productService'
 
+import {
+  createInventory
+} from '../../services/inventoryService'
+
+
 function AdminProducts() {
 
   const [products, setProducts] =
@@ -112,6 +117,7 @@ function AdminProducts() {
     setFormData(
       currentData => ({
         ...currentData,
+
         [name]:
           type === 'checkbox'
             ? checked
@@ -134,6 +140,7 @@ function AdminProducts() {
     })
 
     setEditingProductId(null)
+
     setFormError('')
     setFormSuccess('')
   }
@@ -263,6 +270,7 @@ function AdminProducts() {
       return false
     }
 
+
     return true
   }
 
@@ -311,6 +319,10 @@ function AdminProducts() {
 
       setFormLoading(true)
 
+
+      /*
+       * EDIT EXISTING PRODUCT
+       */
       if (editingProductId !== null) {
 
         const updatedProduct =
@@ -328,7 +340,13 @@ function AdminProducts() {
           'Product updated successfully.'
         )
 
-      } else {
+      }
+
+
+      /*
+       * CREATE NEW PRODUCT
+       */
+      else {
 
         const createdProduct =
           await createProduct(
@@ -340,13 +358,34 @@ function AdminProducts() {
           createdProduct
         )
 
+
+        /*
+         * Create matching inventory
+         *
+         * The newly created product ID
+         * becomes the inventory productId.
+         */
+        const createdInventory =
+          await createInventory(
+            createdProduct.id,
+            productRequest.stockQuantity
+          )
+
+        console.log(
+          'Inventory created successfully:',
+          createdInventory
+        )
+
+
         setFormSuccess(
-          'Product created successfully.'
+          'Product and inventory created successfully.'
         )
 
       }
 
+
       await loadProducts()
+
 
       setTimeout(() => {
 
@@ -355,6 +394,7 @@ function AdminProducts() {
         resetForm()
 
       }, 1000)
+
 
     } catch (error) {
 
@@ -387,6 +427,7 @@ function AdminProducts() {
 
       let updatedProduct
 
+
       if (product.active) {
 
         updatedProduct =
@@ -403,7 +444,10 @@ function AdminProducts() {
           `${product.name} deactivated successfully.`
         )
 
-      } else {
+      }
+
+
+      else {
 
         updatedProduct =
           await activateProduct(
@@ -419,6 +463,7 @@ function AdminProducts() {
           `${product.name} activated successfully.`
         )
       }
+
 
       await loadProducts()
 
@@ -567,11 +612,13 @@ function AdminProducts() {
             className="admin-primary-button admin-add-product-button"
             onClick={handleOpenAddForm}
           >
+
             <span className="admin-button-icon">
               +
             </span>
 
             Add Product
+
           </button>
 
         </div>
@@ -585,8 +632,11 @@ function AdminProducts() {
             className="admin-form-error admin-status-message"
             role="alert"
           >
+
             <span>!</span>
+
             {statusError}
+
           </div>
 
         )}
@@ -598,8 +648,11 @@ function AdminProducts() {
             className="admin-form-success admin-status-message"
             role="status"
           >
+
             <span>✓</span>
+
             {statusSuccess}
+
           </div>
 
         )}
@@ -663,8 +716,11 @@ function AdminProducts() {
                 className="admin-form-error"
                 role="alert"
               >
+
                 <span>!</span>
+
                 {formError}
+
               </div>
 
             )}
@@ -676,8 +732,11 @@ function AdminProducts() {
                 className="admin-form-success"
                 role="status"
               >
+
                 <span>✓</span>
+
                 {formSuccess}
+
               </div>
 
             )}
