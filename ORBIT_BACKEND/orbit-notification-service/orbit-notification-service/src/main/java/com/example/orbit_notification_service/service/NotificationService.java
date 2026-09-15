@@ -39,6 +39,21 @@ public class NotificationService {
         return mapToResponse(savedNotification);
     }
 
+    public NotificationResponse markAsRead(Long id) {
+
+        Notification notification = notificationRepository
+                .findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Notification not found"));
+
+        notification.setRead(true);
+
+        Notification savedNotification =
+                notificationRepository.save(notification);
+
+        return mapToResponse(savedNotification);
+    }
+    
     public NotificationResponse getNotificationById(Long id) {
 
         Notification notification =
@@ -120,6 +135,7 @@ public class NotificationService {
         response.setStatus(notification.getStatus());
         response.setCreatedAt(notification.getCreatedAt());
         response.setUpdatedAt(notification.getUpdatedAt());
+        response.setRead(notification.isRead());
 
         return response;
     }

@@ -61,6 +61,10 @@ function AdminProducts() {
     })
 
 
+  // =========================================================
+  // LOAD PRODUCTS
+  // =========================================================
+
   const loadProducts = async () => {
 
     try {
@@ -76,7 +80,50 @@ function AdminProducts() {
         data
       )
 
-      setProducts(data)
+
+      // =====================================================
+      // SORT PRODUCTS BY ID
+      // =====================================================
+      //
+      // Backend may return:
+      //
+      // 2
+      // 4
+      // 1
+      // 3
+      // 5
+      //
+      // We want:
+      //
+      // 1
+      // 2
+      // 3
+      // 4
+      // 5
+      //
+      // [...data] creates a copy so that
+      // we don't modify the original API response.
+      // =====================================================
+
+      const sortedProducts =
+        Array.isArray(data)
+          ? [...data].sort(
+              (a, b) =>
+                Number(a.id) -
+                Number(b.id)
+            )
+          : []
+
+
+      console.log(
+        'Sorted products:',
+        sortedProducts
+      )
+
+
+      setProducts(
+        sortedProducts
+      )
 
     } catch (error) {
 
@@ -95,8 +142,13 @@ function AdminProducts() {
       setLoading(false)
 
     }
+
   }
 
+
+  // =========================================================
+  // INITIAL LOAD
+  // =========================================================
 
   useEffect(() => {
 
@@ -104,6 +156,10 @@ function AdminProducts() {
 
   }, [])
 
+
+  // =========================================================
+  // FORM INPUT
+  // =========================================================
 
   const handleInputChange = (event) => {
 
@@ -124,8 +180,13 @@ function AdminProducts() {
             : value
       })
     )
+
   }
 
+
+  // =========================================================
+  // RESET FORM
+  // =========================================================
 
   const resetForm = () => {
 
@@ -143,8 +204,13 @@ function AdminProducts() {
 
     setFormError('')
     setFormSuccess('')
+
   }
 
+
+  // =========================================================
+  // OPEN ADD FORM
+  // =========================================================
 
   const handleOpenAddForm = () => {
 
@@ -155,14 +221,21 @@ function AdminProducts() {
   }
 
 
+  // =========================================================
+  // OPEN EDIT FORM
+  // =========================================================
+
   const handleOpenEditForm = (product) => {
 
     setFormError('')
     setFormSuccess('')
 
-    setEditingProductId(product.id)
+    setEditingProductId(
+      product.id
+    )
 
     setFormData({
+
       name:
         product.name || '',
 
@@ -183,6 +256,7 @@ function AdminProducts() {
 
       active:
         product.active ?? true
+
     })
 
     setShowProductForm(true)
@@ -191,8 +265,13 @@ function AdminProducts() {
       top: 0,
       behavior: 'smooth'
     })
+
   }
 
+
+  // =========================================================
+  // CLOSE FORM
+  // =========================================================
 
   const handleCloseProductForm = () => {
 
@@ -206,6 +285,10 @@ function AdminProducts() {
 
   }
 
+
+  // =========================================================
+  // VALIDATE FORM
+  // =========================================================
 
   const validateForm = () => {
 
@@ -272,8 +355,13 @@ function AdminProducts() {
 
 
     return true
+
   }
 
+
+  // =========================================================
+  // SAVE PRODUCT
+  // =========================================================
 
   const handleProductSubmit = async (event) => {
 
@@ -281,6 +369,7 @@ function AdminProducts() {
 
     setFormError('')
     setFormSuccess('')
+
 
     const isValid =
       validateForm()
@@ -312,6 +401,7 @@ function AdminProducts() {
 
       active:
         formData.active
+
     }
 
 
@@ -320,10 +410,13 @@ function AdminProducts() {
       setFormLoading(true)
 
 
-      /*
-       * EDIT EXISTING PRODUCT
-       */
-      if (editingProductId !== null) {
+      // =====================================================
+      // EDIT EXISTING PRODUCT
+      // =====================================================
+
+      if (
+        editingProductId !== null
+      ) {
 
         const updatedProduct =
           await updateProduct(
@@ -343,9 +436,10 @@ function AdminProducts() {
       }
 
 
-      /*
-       * CREATE NEW PRODUCT
-       */
+      // =====================================================
+      // CREATE NEW PRODUCT
+      // =====================================================
+
       else {
 
         const createdProduct =
@@ -359,12 +453,8 @@ function AdminProducts() {
         )
 
 
-        /*
-         * Create matching inventory
-         *
-         * The newly created product ID
-         * becomes the inventory productId.
-         */
+        // Create matching inventory
+
         const createdInventory =
           await createInventory(
             createdProduct.id,
@@ -383,6 +473,23 @@ function AdminProducts() {
 
       }
 
+
+      // =====================================================
+      // RELOAD PRODUCTS
+      // =====================================================
+      //
+      // loadProducts() now automatically sorts by ID.
+      //
+      // So after adding/editing/deactivating:
+      //
+      // 1
+      // 2
+      // 3
+      // 4
+      // ...
+      //
+      // will remain the order.
+      // =====================================================
 
       await loadProducts()
 
@@ -413,79 +520,98 @@ function AdminProducts() {
       setFormLoading(false)
 
     }
+
   }
 
 
-  const handleToggleProductStatus = async (product) => {
+  // =========================================================
+  // ACTIVATE / DEACTIVATE
+  // =========================================================
 
-    setStatusError('')
-    setStatusSuccess('')
+  const handleToggleProductStatus =
+    async (product) => {
 
-    try {
-
-      setStatusLoadingId(product.id)
-
-      let updatedProduct
+      setStatusError('')
+      setStatusSuccess('')
 
 
-      if (product.active) {
+      try {
 
-        updatedProduct =
-          await deactivateProduct(
-            product.id
+        setStatusLoadingId(
+          product.id
+        )
+
+
+        let updatedProduct
+
+
+        if (product.active) {
+
+          updatedProduct =
+            await deactivateProduct(
+              product.id
+            )
+
+          console.log(
+            'Product deactivated successfully:',
+            updatedProduct
           )
 
-        console.log(
-          'Product deactivated successfully:',
-          updatedProduct
-        )
-
-        setStatusSuccess(
-          `${product.name} deactivated successfully.`
-        )
-
-      }
-
-
-      else {
-
-        updatedProduct =
-          await activateProduct(
-            product.id
+          setStatusSuccess(
+            `${product.name} deactivated successfully.`
           )
 
-        console.log(
-          'Product activated successfully:',
-          updatedProduct
+        }
+
+
+        else {
+
+          updatedProduct =
+            await activateProduct(
+              product.id
+            )
+
+          console.log(
+            'Product activated successfully:',
+            updatedProduct
+          )
+
+          setStatusSuccess(
+            `${product.name} activated successfully.`
+          )
+
+        }
+
+
+        // Reload sorted list
+
+        await loadProducts()
+
+
+      } catch (error) {
+
+        console.error(
+          'Failed to change product status:',
+          error
         )
 
-        setStatusSuccess(
-          `${product.name} activated successfully.`
+        setStatusError(
+          error.message ||
+          'Failed to change product status.'
         )
+
+      } finally {
+
+        setStatusLoadingId(null)
+
       }
-
-
-      await loadProducts()
-
-    } catch (error) {
-
-      console.error(
-        'Failed to change product status:',
-        error
-      )
-
-      setStatusError(
-        error.message ||
-        'Failed to change product status.'
-      )
-
-    } finally {
-
-      setStatusLoadingId(null)
 
     }
-  }
 
+
+  // =========================================================
+  // SUMMARY
+  // =========================================================
 
   const activeProducts =
     products.filter(
@@ -505,14 +631,21 @@ function AdminProducts() {
     products.reduce(
       (total, product) =>
         total +
-        Number(product.stockQuantity || 0),
+        Number(
+          product.stockQuantity || 0
+        ),
       0
     )
 
 
+  // =========================================================
+  // LOADING
+  // =========================================================
+
   if (loading) {
 
     return (
+
       <main className="admin-products-page">
 
         <div className="admin-products-container">
@@ -530,13 +663,20 @@ function AdminProducts() {
         </div>
 
       </main>
+
     )
+
   }
 
+
+  // =========================================================
+  // ERROR
+  // =========================================================
 
   if (error) {
 
     return (
+
       <main className="admin-products-page">
 
         <div className="admin-products-container">
@@ -567,9 +707,15 @@ function AdminProducts() {
         </div>
 
       </main>
+
     )
+
   }
 
+
+  // =========================================================
+  // MAIN UI
+  // =========================================================
 
   return (
 
@@ -624,7 +770,7 @@ function AdminProducts() {
         </div>
 
 
-        {/* STATUS MESSAGES */}
+        {/* STATUS ERROR */}
 
         {statusError && (
 
@@ -633,7 +779,9 @@ function AdminProducts() {
             role="alert"
           >
 
-            <span>!</span>
+            <span>
+              !
+            </span>
 
             {statusError}
 
@@ -642,6 +790,8 @@ function AdminProducts() {
         )}
 
 
+        {/* STATUS SUCCESS */}
+
         {statusSuccess && (
 
           <div
@@ -649,7 +799,9 @@ function AdminProducts() {
             role="status"
           >
 
-            <span>✓</span>
+            <span>
+              ✓
+            </span>
 
             {statusSuccess}
 
@@ -701,7 +853,9 @@ function AdminProducts() {
               <button
                 type="button"
                 className="admin-form-close-button"
-                onClick={handleCloseProductForm}
+                onClick={
+                  handleCloseProductForm
+                }
                 disabled={formLoading}
               >
                 ×
@@ -710,6 +864,8 @@ function AdminProducts() {
             </div>
 
 
+            {/* FORM ERROR */}
+
             {formError && (
 
               <div
@@ -717,7 +873,9 @@ function AdminProducts() {
                 role="alert"
               >
 
-                <span>!</span>
+                <span>
+                  !
+                </span>
 
                 {formError}
 
@@ -726,6 +884,8 @@ function AdminProducts() {
             )}
 
 
+            {/* FORM SUCCESS */}
+
             {formSuccess && (
 
               <div
@@ -733,7 +893,9 @@ function AdminProducts() {
                 role="status"
               >
 
-                <span>✓</span>
+                <span>
+                  ✓
+                </span>
 
                 {formSuccess}
 
@@ -744,11 +906,15 @@ function AdminProducts() {
 
             <form
               className="admin-product-form"
-              onSubmit={handleProductSubmit}
+              onSubmit={
+                handleProductSubmit
+              }
             >
 
               <div className="admin-form-grid">
 
+
+                {/* PRODUCT NAME */}
 
                 <div className="admin-form-field">
 
@@ -761,13 +927,17 @@ function AdminProducts() {
                     name="name"
                     type="text"
                     value={formData.name}
-                    onChange={handleInputChange}
+                    onChange={
+                      handleInputChange
+                    }
                     placeholder="Enter product name"
                     disabled={formLoading}
                   />
 
                 </div>
 
+
+                {/* CATEGORY */}
 
                 <div className="admin-form-field">
 
@@ -780,13 +950,17 @@ function AdminProducts() {
                     name="category"
                     type="text"
                     value={formData.category}
-                    onChange={handleInputChange}
+                    onChange={
+                      handleInputChange
+                    }
                     placeholder="e.g. Mobile"
                     disabled={formLoading}
                   />
 
                 </div>
 
+
+                {/* PRICE */}
 
                 <div className="admin-form-field">
 
@@ -807,7 +981,9 @@ function AdminProducts() {
                       min="0.01"
                       step="0.01"
                       value={formData.price}
-                      onChange={handleInputChange}
+                      onChange={
+                        handleInputChange
+                      }
                       placeholder="69999.99"
                       disabled={formLoading}
                     />
@@ -816,6 +992,8 @@ function AdminProducts() {
 
                 </div>
 
+
+                {/* STOCK */}
 
                 <div className="admin-form-field">
 
@@ -829,14 +1007,20 @@ function AdminProducts() {
                     type="number"
                     min="0"
                     step="1"
-                    value={formData.stockQuantity}
-                    onChange={handleInputChange}
+                    value={
+                      formData.stockQuantity
+                    }
+                    onChange={
+                      handleInputChange
+                    }
                     placeholder="50"
                     disabled={formLoading}
                   />
 
                 </div>
 
+
+                {/* DESCRIPTION */}
 
                 <div className="admin-form-field admin-form-field-full">
 
@@ -848,14 +1032,20 @@ function AdminProducts() {
                     id="product-description"
                     name="description"
                     rows="4"
-                    value={formData.description}
-                    onChange={handleInputChange}
+                    value={
+                      formData.description
+                    }
+                    onChange={
+                      handleInputChange
+                    }
                     placeholder="Enter product description"
                     disabled={formLoading}
                   />
 
                 </div>
 
+
+                {/* IMAGE URL */}
 
                 <div className="admin-form-field admin-form-field-full">
 
@@ -867,8 +1057,12 @@ function AdminProducts() {
                     id="product-image-url"
                     name="imageUrl"
                     type="text"
-                    value={formData.imageUrl}
-                    onChange={handleInputChange}
+                    value={
+                      formData.imageUrl
+                    }
+                    onChange={
+                      handleInputChange
+                    }
                     placeholder="https://example.com/product.jpg"
                     disabled={formLoading}
                   />
@@ -881,6 +1075,8 @@ function AdminProducts() {
                 </div>
 
 
+                {/* IMAGE PREVIEW */}
+
                 {formData.imageUrl && (
 
                   <div className="admin-image-preview">
@@ -890,11 +1086,15 @@ function AdminProducts() {
                     </span>
 
                     <img
-                      src={formData.imageUrl}
+                      src={
+                        formData.imageUrl
+                      }
                       alt="Product preview"
                       onError={(event) => {
+
                         event.currentTarget.style.display =
                           'none'
+
                       }}
                     />
 
@@ -903,14 +1103,20 @@ function AdminProducts() {
                 )}
 
 
+                {/* ACTIVE */}
+
                 <div className="admin-form-checkbox">
 
                   <input
                     id="product-active"
                     name="active"
                     type="checkbox"
-                    checked={formData.active}
-                    onChange={handleInputChange}
+                    checked={
+                      formData.active
+                    }
+                    onChange={
+                      handleInputChange
+                    }
                     disabled={formLoading}
                   />
 
@@ -932,12 +1138,16 @@ function AdminProducts() {
               </div>
 
 
+              {/* FORM ACTIONS */}
+
               <div className="admin-form-actions">
 
                 <button
                   type="button"
                   className="admin-secondary-button"
-                  onClick={handleCloseProductForm}
+                  onClick={
+                    handleCloseProductForm
+                  }
                   disabled={formLoading}
                 >
                   Cancel
@@ -951,12 +1161,15 @@ function AdminProducts() {
                 >
 
                   {formLoading
+
                     ? editingProductId !== null
                       ? 'Updating Product...'
                       : 'Creating Product...'
+
                     : editingProductId !== null
                       ? 'Update Product'
                       : 'Create Product'
+
                   }
 
                 </button>
@@ -1087,7 +1300,9 @@ function AdminProducts() {
             <button
               type="button"
               className="admin-primary-button"
-              onClick={handleOpenAddForm}
+              onClick={
+                handleOpenAddForm
+              }
             >
               + Add Your First Product
             </button>
@@ -1098,6 +1313,8 @@ function AdminProducts() {
 
           <div className="admin-products-table-card">
 
+
+            {/* TABLE HEADER */}
 
             <div className="admin-table-header">
 
@@ -1117,12 +1334,15 @@ function AdminProducts() {
 
               </div>
 
+
               <div className="admin-table-count">
                 {products.length} products
               </div>
 
             </div>
 
+
+            {/* TABLE */}
 
             <div className="admin-products-table-wrapper">
 
@@ -1167,183 +1387,223 @@ function AdminProducts() {
 
                 <tbody>
 
-                  {products.map(product => (
+                  {products.map(
+                    product => (
 
-                    <tr
-                      key={product.id}
-                    >
+                      <tr
+                        key={
+                          product.id
+                        }
+                      >
+
+                        {/* ID */}
+
+                        <td>
+
+                          <span className="admin-product-id">
+                            #{product.id}
+                          </span>
+
+                        </td>
 
 
-                      <td>
+                        {/* PRODUCT */}
 
-                        <span className="admin-product-id">
-                          #{product.id}
-                        </span>
+                        <td>
 
-                      </td>
+                          <div className="admin-product-cell">
+
+                            <div className="admin-product-thumbnail">
+
+                              {product.imageUrl ? (
+
+                                <img
+                                  src={
+                                    product.imageUrl
+                                  }
+                                  alt={
+                                    product.name
+                                  }
+                                />
+
+                              ) : (
+
+                                <span>
+                                  O
+                                </span>
+
+                              )}
+
+                            </div>
 
 
-                      <td>
+                            <div className="admin-product-name">
 
-                        <div className="admin-product-cell">
-
-                          <div className="admin-product-thumbnail">
-
-                            {product.imageUrl ? (
-
-                              <img
-                                src={product.imageUrl}
-                                alt={product.name}
-                              />
-
-                            ) : (
+                              <strong>
+                                {product.name}
+                              </strong>
 
                               <span>
-                                O
+                                {product.description}
                               </span>
 
+                            </div>
+
+                          </div>
+
+                        </td>
+
+
+                        {/* CATEGORY */}
+
+                        <td>
+
+                          <span className="admin-category-badge">
+                            {product.category}
+                          </span>
+
+                        </td>
+
+
+                        {/* PRICE */}
+
+                        <td>
+
+                          <strong className="admin-product-price">
+
+                            ₹
+
+                            {Number(
+                              product.price
+                            ).toLocaleString(
+                              'en-IN',
+                              {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                              }
                             )}
 
-                          </div>
+                          </strong>
+
+                        </td>
 
 
-                          <div className="admin-product-name">
+                        {/* STOCK */}
 
-                            <strong>
-                              {product.name}
-                            </strong>
+                        <td>
 
-                            <span>
-                              {product.description}
-                            </span>
+                          <span
+                            className={
+                              Number(
+                                product.stockQuantity
+                              ) > 0
 
-                          </div>
+                                ? 'admin-stock-value'
 
-                        </div>
-
-                      </td>
-
-
-                      <td>
-
-                        <span className="admin-category-badge">
-                          {product.category}
-                        </span>
-
-                      </td>
-
-
-                      <td>
-
-                        <strong className="admin-product-price">
-
-                          ₹
-                          {Number(
-                            product.price
-                          ).toLocaleString(
-                            'en-IN',
-                            {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2
-                            }
-                          )}
-
-                        </strong>
-
-                      </td>
-
-
-                      <td>
-
-                        <span
-                          className={
-                            Number(product.stockQuantity) > 0
-                              ? 'admin-stock-value'
-                              : 'admin-stock-value admin-stock-empty'
-                          }
-                        >
-                          {product.stockQuantity}
-                        </span>
-
-                      </td>
-
-
-                      <td>
-
-                        <span
-                          className={
-                            product.active
-                              ? 'admin-status-active'
-                              : 'admin-status-inactive'
-                          }
-                        >
-
-                          <span className="admin-status-dot" />
-
-                          {product.active
-                            ? 'Active'
-                            : 'Inactive'
-                          }
-
-                        </span>
-
-                      </td>
-
-
-                      <td>
-
-                        <div className="admin-table-actions">
-
-
-                          <button
-                            type="button"
-                            className="admin-action-button"
-                            onClick={() =>
-                              handleOpenEditForm(
-                                product
-                              )
-                            }
-                            disabled={
-                              statusLoadingId === product.id
+                                : 'admin-stock-value admin-stock-empty'
                             }
                           >
-                            Edit
-                          </button>
+
+                            {
+                              product.stockQuantity
+                            }
+
+                          </span>
+
+                        </td>
 
 
-                          <button
-                            type="button"
+                        {/* STATUS */}
+
+                        <td>
+
+                          <span
                             className={
                               product.active
-                                ? 'admin-action-button admin-danger-action'
-                                : 'admin-action-button admin-success-action'
-                            }
-                            onClick={() =>
-                              handleToggleProductStatus(
-                                product
-                              )
-                            }
-                            disabled={
-                              statusLoadingId === product.id
+
+                                ? 'admin-status-active'
+
+                                : 'admin-status-inactive'
                             }
                           >
 
-                            {statusLoadingId === product.id
-                              ? 'Updating...'
-                              : product.active
-                                ? 'Deactivate'
-                                : 'Activate'
+                            <span className="admin-status-dot" />
+
+                            {product.active
+                              ? 'Active'
+                              : 'Inactive'
                             }
 
-                          </button>
+                          </span>
 
-                        </div>
+                        </td>
 
-                      </td>
 
-                    </tr>
+                        {/* ACTIONS */}
 
-                  ))}
+                        <td>
+
+                          <div className="admin-table-actions">
+
+
+                            <button
+                              type="button"
+                              className="admin-action-button"
+                              onClick={() =>
+                                handleOpenEditForm(
+                                  product
+                                )
+                              }
+                              disabled={
+                                statusLoadingId ===
+                                product.id
+                              }
+                            >
+                              Edit
+                            </button>
+
+
+                            <button
+                              type="button"
+                              className={
+                                product.active
+
+                                  ? 'admin-action-button admin-danger-action'
+
+                                  : 'admin-action-button admin-success-action'
+                              }
+                              onClick={() =>
+                                handleToggleProductStatus(
+                                  product
+                                )
+                              }
+                              disabled={
+                                statusLoadingId ===
+                                product.id
+                              }
+                            >
+
+                              {
+                                statusLoadingId ===
+                                product.id
+
+                                  ? 'Updating...'
+
+                                  : product.active
+                                    ? 'Deactivate'
+                                    : 'Activate'
+                              }
+
+                            </button>
+
+                          </div>
+
+                        </td>
+
+                      </tr>
+
+                    )
+                  )}
 
                 </tbody>
 
@@ -1358,7 +1618,10 @@ function AdminProducts() {
       </div>
 
     </main>
+
   )
+
 }
+
 
 export default AdminProducts

@@ -13,6 +13,9 @@ public class Notification {
     private Long id;
 
     @Column(nullable = false)
+    private boolean read = false;
+    
+    @Column(nullable = false)
     private Long userId;
 
     @Column(nullable = false)
@@ -35,6 +38,15 @@ public class Notification {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    
+    public boolean isRead() {
+        return read;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
+    }
+    
     public Notification() {
     }
 

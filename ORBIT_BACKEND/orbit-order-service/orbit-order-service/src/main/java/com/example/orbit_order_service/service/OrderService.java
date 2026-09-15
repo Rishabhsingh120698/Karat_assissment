@@ -564,16 +564,89 @@ public class OrderService {
                         + newStatus
                         + ".";
 
+         notificationMessage =
+                buildNotificationMessage(
+                        updatedOrder.getOrderNumber(),
+                        updatedOrder.getStatus());
+
+        String notificationType =
+                getNotificationType(
+                        updatedOrder.getStatus());
+
         notificationClient.createNotification(
                 updatedOrder.getUserId(),
                 updatedOrder.getId(),
-                "ORDER_CONFIRMED",
+                notificationType,
                 notificationMessage);
 
         return mapToResponse(
                 updatedOrder);
     }
 
+    
+    private String getNotificationType(OrderStatus status) {
+
+        switch (status) {
+
+            case CREATED:
+                return "ORDER_CREATED";
+
+            case CONFIRMED:
+                return "ORDER_CONFIRMED";
+
+            case PROCESSING:
+                return "ORDER_PROCESSING";
+
+            case SHIPPED:
+                return "ORDER_SHIPPED";
+
+            case DELIVERED:
+                return "ORDER_DELIVERED";
+
+            case CANCELLED:
+                return "ORDER_CANCELLED";
+
+            default:
+                throw new IllegalArgumentException(
+                        "Unsupported notification status: " + status);
+        }
+    }
+    
+    private String buildNotificationMessage(
+            String orderNumber,
+            OrderStatus status) {
+
+        switch (status) {
+
+            case CREATED:
+                return "Your order " + orderNumber
+                        + " has been created successfully.";
+
+            case CONFIRMED:
+                return "Your order " + orderNumber
+                        + " has been confirmed successfully.";
+
+            case PROCESSING:
+                return "Your order " + orderNumber
+                        + " is now being processed.";
+
+            case SHIPPED:
+                return "Your order " + orderNumber
+                        + " has been shipped.";
+
+            case DELIVERED:
+                return "Your order " + orderNumber
+                        + " has been delivered successfully.";
+
+            case CANCELLED:
+                return "Your order " + orderNumber
+                        + " has been cancelled.";
+
+            default:
+                return "Your order " + orderNumber
+                        + " status has been updated.";
+        }
+    }
     /**
      * Validates the order status state machine.
      */

@@ -54,7 +54,8 @@ function CartProvider({ children }) {
 
             return {
               ...item,
-              quantity: item.quantity + quantity
+              quantity: item.quantity + quantity,
+              imageUrl: product.imageUrl
             }
           }
 
@@ -66,6 +67,7 @@ function CartProvider({ children }) {
         productId: product.id,
         name: product.name,
         price: product.price,
+        imageUrl: product.imageUrl,
         quantity: quantity
       }
 

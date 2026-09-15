@@ -1,5 +1,6 @@
 package com.example.orbit_order_service.client;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -8,9 +9,12 @@ public class NotificationClient {
 
     private final RestClient restClient;
 
-    public NotificationClient() {
+    public NotificationClient(
+            @Value("${notification.service.url:http://localhost:8085}")
+            String notificationServiceUrl) {
+
         this.restClient = RestClient.builder()
-                .baseUrl("http://localhost:8085")
+                .baseUrl(notificationServiceUrl)
                 .build();
     }
 
@@ -20,7 +24,8 @@ public class NotificationClient {
             String type,
             String message) {
 
-        NotificationRequest request = new NotificationRequest();
+        NotificationRequest request =
+                new NotificationRequest();
 
         request.setUserId(userId);
         request.setOrderId(orderId);
@@ -33,6 +38,10 @@ public class NotificationClient {
                 .retrieve()
                 .body(NotificationResponse.class);
     }
+
+    // ============================================================
+    // REQUEST
+    // ============================================================
 
     public static class NotificationRequest {
 
@@ -76,6 +85,10 @@ public class NotificationClient {
             this.message = message;
         }
     }
+
+    // ============================================================
+    // RESPONSE
+    // ============================================================
 
     public static class NotificationResponse {
 

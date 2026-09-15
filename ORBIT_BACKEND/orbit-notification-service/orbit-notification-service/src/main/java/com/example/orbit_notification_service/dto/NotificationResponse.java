@@ -16,6 +16,16 @@ public class NotificationResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    private boolean read;
+
+    public boolean isRead() {
+        return read;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
+    }
+    
     public NotificationResponse() {
     }
 

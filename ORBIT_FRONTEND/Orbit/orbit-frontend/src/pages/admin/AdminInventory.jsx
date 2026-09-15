@@ -7,10 +7,17 @@ import {
   decreaseStock
 } from '../../services/inventoryService'
 
+import {
+  getAllProducts
+} from '../../services/productService'
+
 
 function AdminInventory() {
 
   const [inventory, setInventory] =
+    useState([])
+
+  const [products, setProducts] =
     useState([])
 
   const [loading, setLoading] =
@@ -35,29 +42,81 @@ function AdminInventory() {
     useState('')
 
 
+  // =========================================================
+  // LOAD INVENTORY + PRODUCTS
+  // =========================================================
+
   const loadInventory = async () => {
 
     try {
 
       setLoading(true)
+
       setError('')
 
-      const data =
-        await getAllInventory()
+
+      /*
+       * We need two pieces of information:
+       *
+       * 1. Inventory Service
+       *    -> stockQuantity
+       *    -> reservedQuantity
+       *    -> availableQuantity
+       *
+       * 2. Product Service
+       *    -> product name
+       *    -> category
+       *    -> image
+       *
+       * Both calls can happen at the same time.
+       */
+
+      const [
+        inventoryData,
+        productData
+      ] = await Promise.all([
+        getAllInventory(),
+        getAllProducts()
+      ])
+
 
       console.log(
         'Admin inventory received:',
-        data
+        inventoryData
       )
 
-      setInventory(data)
+
+      console.log(
+        'Admin products received:',
+        productData
+      )
+
+
+      const sortedInventory =
+  Array.isArray(inventoryData)
+    ? [...inventoryData].sort(
+        (a, b) =>
+          Number(a.productId) -
+          Number(b.productId)
+      )
+    : []
+
+setInventory(sortedInventory)
+
+
+      setProducts(
+        Array.isArray(productData)
+          ? productData
+          : []
+      )
 
     } catch (error) {
 
       console.error(
-        'Failed to load inventory:',
+        'Failed to load inventory/products:',
         error
       )
+
 
       setError(
         error.message ||
@@ -72,12 +131,35 @@ function AdminInventory() {
   }
 
 
+  // =========================================================
+  // INITIAL LOAD
+  // =========================================================
+
   useEffect(() => {
 
     loadInventory()
 
   }, [])
 
+
+  // =========================================================
+  // FIND PRODUCT BY PRODUCT ID
+  // =========================================================
+
+  const getProductById = (productId) => {
+
+    return products.find(
+      product =>
+        Number(product.id) ===
+        Number(productId)
+    )
+
+  }
+
+
+  // =========================================================
+  // MANAGE STOCK
+  // =========================================================
 
   const handleOpenManage = (productId) => {
 
@@ -86,6 +168,7 @@ function AdminInventory() {
     setQuantity('')
 
     setActionError('')
+
     setActionSuccess('')
 
   }
@@ -97,15 +180,21 @@ function AdminInventory() {
       return
     }
 
+
     setSelectedProductId(null)
 
     setQuantity('')
 
     setActionError('')
+
     setActionSuccess('')
 
   }
 
+
+  // =========================================================
+  // QUANTITY CHANGE
+  // =========================================================
 
   const handleQuantityChange = (event) => {
 
@@ -114,15 +203,22 @@ function AdminInventory() {
     )
 
     setActionError('')
+
     setActionSuccess('')
 
   }
 
 
+  // =========================================================
+  // INCREASE STOCK
+  // =========================================================
+
   const handleIncreaseStock = async () => {
 
     setActionError('')
+
     setActionSuccess('')
+
 
     if (
       quantity === '' ||
@@ -136,9 +232,11 @@ function AdminInventory() {
       return
     }
 
+
     try {
 
       setActionLoading(true)
+
 
       const updatedInventory =
         await increaseStock(
@@ -146,16 +244,20 @@ function AdminInventory() {
           quantity
         )
 
+
       console.log(
         'Stock increased successfully:',
         updatedInventory
       )
 
+
       setActionSuccess(
         `Stock increased by ${quantity}.`
       )
 
+
       setQuantity('')
+
 
       await loadInventory()
 
@@ -165,6 +267,7 @@ function AdminInventory() {
         'Failed to increase stock:',
         error
       )
+
 
       setActionError(
         error.message ||
@@ -179,10 +282,16 @@ function AdminInventory() {
   }
 
 
+  // =========================================================
+  // DECREASE STOCK
+  // =========================================================
+
   const handleDecreaseStock = async () => {
 
     setActionError('')
+
     setActionSuccess('')
+
 
     if (
       quantity === '' ||
@@ -196,9 +305,11 @@ function AdminInventory() {
       return
     }
 
+
     try {
 
       setActionLoading(true)
+
 
       const updatedInventory =
         await decreaseStock(
@@ -206,16 +317,20 @@ function AdminInventory() {
           quantity
         )
 
+
       console.log(
         'Stock decreased successfully:',
         updatedInventory
       )
 
+
       setActionSuccess(
         `Stock decreased by ${quantity}.`
       )
 
+
       setQuantity('')
+
 
       await loadInventory()
 
@@ -225,6 +340,7 @@ function AdminInventory() {
         'Failed to decrease stock:',
         error
       )
+
 
       setActionError(
         error.message ||
@@ -238,6 +354,10 @@ function AdminInventory() {
     }
   }
 
+
+  // =========================================================
+  // LOADING
+  // =========================================================
 
   if (loading) {
 
@@ -264,6 +384,10 @@ function AdminInventory() {
     )
   }
 
+
+  // =========================================================
+  // ERROR
+  // =========================================================
 
   if (error) {
 
@@ -304,11 +428,17 @@ function AdminInventory() {
   }
 
 
+  // =========================================================
+  // SUMMARY CALCULATIONS
+  // =========================================================
+
   const totalStock =
     inventory.reduce(
       (total, item) =>
         total +
-        Number(item.stockQuantity || 0),
+        Number(
+          item.stockQuantity || 0
+        ),
       0
     )
 
@@ -317,7 +447,9 @@ function AdminInventory() {
     inventory.reduce(
       (total, item) =>
         total +
-        Number(item.reservedQuantity || 0),
+        Number(
+          item.reservedQuantity || 0
+        ),
       0
     )
 
@@ -326,7 +458,9 @@ function AdminInventory() {
     inventory.reduce(
       (total, item) =>
         total +
-        Number(item.availableQuantity || 0),
+        Number(
+          item.availableQuantity || 0
+        ),
       0
     )
 
@@ -334,51 +468,83 @@ function AdminInventory() {
   const lowStockItems =
     inventory.filter(
       item =>
-        Number(item.availableQuantity || 0) > 0 &&
-        Number(item.availableQuantity || 0) <= 5
+        Number(
+          item.availableQuantity || 0
+        ) > 0 &&
+        Number(
+          item.availableQuantity || 0
+        ) <= 5
     ).length
 
 
   const outOfStockItems =
     inventory.filter(
       item =>
-        Number(item.availableQuantity || 0) <= 0
+        Number(
+          item.availableQuantity || 0
+        ) <= 0
     ).length
 
 
-  const getStockClass = (availableQuantity) => {
+  // =========================================================
+  // STOCK CLASS
+  // =========================================================
 
-    const available =
-      Number(availableQuantity || 0)
+  const getStockClass =
+    (availableQuantity) => {
 
-    if (available <= 0) {
-      return 'inventory-stock-danger'
+      const available =
+        Number(
+          availableQuantity || 0
+        )
+
+
+      if (available <= 0) {
+        return 'inventory-stock-danger'
+      }
+
+
+      if (available <= 5) {
+        return 'inventory-stock-warning'
+      }
+
+
+      return 'inventory-stock-good'
+
     }
 
-    if (available <= 5) {
-      return 'inventory-stock-warning'
+
+  // =========================================================
+  // STOCK LABEL
+  // =========================================================
+
+  const getStockLabel =
+    (availableQuantity) => {
+
+      const available =
+        Number(
+          availableQuantity || 0
+        )
+
+
+      if (available <= 0) {
+        return 'Out of Stock'
+      }
+
+
+      if (available <= 5) {
+        return 'Low Stock'
+      }
+
+
+      return 'In Stock'
+
     }
 
-    return 'inventory-stock-good'
-  }
 
-
-  const getStockLabel = (availableQuantity) => {
-
-    const available =
-      Number(availableQuantity || 0)
-
-    if (available <= 0) {
-      return 'Out of Stock'
-    }
-
-    if (available <= 5) {
-      return 'Low Stock'
-    }
-
-    return 'In Stock'
-  }
-
+  // =========================================================
+  // RENDER
+  // =========================================================
 
   return (
 
@@ -387,7 +553,9 @@ function AdminInventory() {
       <div className="admin-inventory-container">
 
 
-        {/* HEADER */}
+        {/* ================================================= */}
+        {/* HEADER                                             */}
+        {/* ================================================= */}
 
         <div className="admin-inventory-header">
 
@@ -418,7 +586,9 @@ function AdminInventory() {
         </div>
 
 
-        {/* ACTION MESSAGES */}
+        {/* ================================================= */}
+        {/* ACTION MESSAGES                                   */}
+        {/* ================================================= */}
 
         {actionError && (
 
@@ -446,7 +616,9 @@ function AdminInventory() {
         )}
 
 
-        {/* SUMMARY */}
+        {/* ================================================= */}
+        {/* SUMMARY                                            */}
+        {/* ================================================= */}
 
         <div className="admin-inventory-summary">
 
@@ -537,7 +709,9 @@ function AdminInventory() {
         </div>
 
 
-        {/* STOCK ALERTS */}
+        {/* ================================================= */}
+        {/* STOCK ALERTS                                      */}
+        {/* ================================================= */}
 
         <div className="inventory-alert-row">
 
@@ -619,7 +793,9 @@ function AdminInventory() {
         </div>
 
 
-        {/* EMPTY STATE */}
+        {/* ================================================= */}
+        {/* EMPTY STATE                                       */}
+        {/* ================================================= */}
 
         {inventory.length === 0 ? (
 
@@ -649,7 +825,9 @@ function AdminInventory() {
           <div className="admin-inventory-table-card">
 
 
-            {/* TABLE HEADER */}
+            {/* ================================================= */}
+            {/* TABLE HEADER                                      */}
+            {/* ================================================= */}
 
             <div className="admin-table-header">
 
@@ -676,7 +854,9 @@ function AdminInventory() {
             </div>
 
 
-            {/* TABLE */}
+            {/* ================================================= */}
+            {/* TABLE                                             */}
+            {/* ================================================= */}
 
             <div className="admin-inventory-table-wrapper">
 
@@ -721,129 +901,226 @@ function AdminInventory() {
 
                 <tbody>
 
-                  {inventory.map(item => (
+                  {inventory.map(item => {
 
-                    <tr
-                      key={item.id}
-                    >
-
-
-                      <td>
-
-                        <span className="inventory-id">
-                          #{item.id}
-                        </span>
-
-                      </td>
+                    const product =
+                      getProductById(
+                        item.productId
+                      )
 
 
-                      <td>
+                    return (
 
-                        <div className="inventory-product-cell">
+                      <tr
+                        key={item.id}
+                      >
 
-                          <div className="inventory-product-icon">
-                            📦
+
+                        {/* ================================= */}
+                        {/* INVENTORY ID                       */}
+                        {/* ================================= */}
+
+                        <td>
+
+                          <span className="inventory-id">
+                            #{item.id}
+                          </span>
+
+                        </td>
+
+
+                        {/* ================================= */}
+                        {/* ACTUAL PRODUCT                     */}
+                        {/* ================================= */}
+
+                        <td>
+
+                          <div className="inventory-product-cell">
+
+
+                            {/* PRODUCT IMAGE */}
+
+                            <div
+                              className="inventory-product-icon"
+                              style={{
+                                overflow: 'hidden',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}
+                            >
+
+                              {product &&
+                              product.imageUrl ? (
+
+                                <img
+                                  src={
+                                    product.imageUrl
+                                  }
+                                  alt={
+                                    product.name ||
+                                    `Product ${item.productId}`
+                                  }
+                                  style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover'
+                                  }}
+                                />
+
+                              ) : (
+
+                                <span>
+                                  📦
+                                </span>
+
+                              )}
+
+                            </div>
+
+
+                            {/* PRODUCT DETAILS */}
+
+                            <div>
+
+                              <strong>
+
+                                {product
+                                  ? product.name
+                                  : `Product #${item.productId}`
+                                }
+
+                              </strong>
+
+
+                              <span>
+
+                                {product &&
+                                product.category
+                                  ? product.category
+                                  : 'Inventory record'
+                                }
+
+                              </span>
+
+                            </div>
+
                           </div>
 
-                          <div>
+                        </td>
 
-                            <strong>
-                              Product #{item.productId}
-                            </strong>
+
+                        {/* ================================= */}
+                        {/* TOTAL STOCK                        */}
+                        {/* ================================= */}
+
+                        <td>
+
+                          <span className="inventory-number inventory-total">
+                            {item.stockQuantity}
+                          </span>
+
+                        </td>
+
+
+                        {/* ================================= */}
+                        {/* RESERVED                            */}
+                        {/* ================================= */}
+
+                        <td>
+
+                          <span className="inventory-number inventory-reserved">
+                            {item.reservedQuantity}
+                          </span>
+
+                        </td>
+
+
+                        {/* ================================= */}
+                        {/* AVAILABLE                           */}
+                        {/* ================================= */}
+
+                        <td>
+
+                          <span
+                            className={
+                              `inventory-number ${
+                                Number(
+                                  item.availableQuantity || 0
+                                ) <= 0
+                                  ? 'inventory-available-danger'
+                                  : Number(
+                                      item.availableQuantity || 0
+                                    ) <= 5
+                                    ? 'inventory-available-warning'
+                                    : 'inventory-available-good'
+                              }`
+                            }
+                          >
+                            {item.availableQuantity}
+                          </span>
+
+                        </td>
+
+
+                        {/* ================================= */}
+                        {/* STATUS                              */}
+                        {/* ================================= */}
+
+                        <td>
+
+                          <span
+                            className={
+                              `inventory-status ${
+                                getStockClass(
+                                  item.availableQuantity
+                                )
+                              }`
+                            }
+                          >
+
+                            <span className="inventory-status-dot" />
+
+                            {getStockLabel(
+                              item.availableQuantity
+                            )}
+
+                          </span>
+
+                        </td>
+
+
+                        {/* ================================= */}
+                        {/* ACTION                              */}
+                        {/* ================================= */}
+
+                        <td>
+
+                          <button
+                            type="button"
+                            className="inventory-manage-button"
+                            onClick={() =>
+                              handleOpenManage(
+                                item.productId
+                              )
+                            }
+                          >
+
+                            Manage Stock
 
                             <span>
-                              Inventory record
+                              →
                             </span>
 
-                          </div>
+                          </button>
 
-                        </div>
+                        </td>
 
-                      </td>
+                      </tr>
 
+                    )
 
-                      <td>
-
-                        <span className="inventory-number inventory-total">
-                          {item.stockQuantity}
-                        </span>
-
-                      </td>
-
-
-                      <td>
-
-                        <span className="inventory-number inventory-reserved">
-                          {item.reservedQuantity}
-                        </span>
-
-                      </td>
-
-
-                      <td>
-
-                        <span
-                          className={
-                            `inventory-number ${
-                              Number(item.availableQuantity || 0) <= 0
-                                ? 'inventory-available-danger'
-                                : Number(item.availableQuantity || 0) <= 5
-                                  ? 'inventory-available-warning'
-                                  : 'inventory-available-good'
-                            }`
-                          }
-                        >
-                          {item.availableQuantity}
-                        </span>
-
-                      </td>
-
-
-                      <td>
-
-                        <span
-                          className={
-                            `inventory-status ${
-                              getStockClass(
-                                item.availableQuantity
-                              )
-                            }`
-                          }
-                        >
-
-                          <span className="inventory-status-dot" />
-
-                          {getStockLabel(
-                            item.availableQuantity
-                          )}
-
-                        </span>
-
-                      </td>
-
-
-                      <td>
-
-                        <button
-                          type="button"
-                          className="inventory-manage-button"
-                          onClick={() =>
-                            handleOpenManage(
-                              item.productId
-                            )
-                          }
-                        >
-                          Manage Stock
-                          <span>
-                            →
-                          </span>
-                        </button>
-
-                      </td>
-
-                    </tr>
-
-                  ))}
+                  })}
 
                 </tbody>
 
@@ -856,7 +1133,9 @@ function AdminInventory() {
         )}
 
 
-        {/* MANAGE STOCK */}
+        {/* ================================================= */}
+        {/* MANAGE STOCK                                      */}
+        {/* ================================================= */}
 
         {selectedProductId !== null && (
 
@@ -872,7 +1151,18 @@ function AdminInventory() {
                 </span>
 
                 <h2>
-                  Manage Product #{selectedProductId}
+
+                  Manage{' '}
+
+                  {getProductById(
+                    selectedProductId
+                  )
+                    ? getProductById(
+                        selectedProductId
+                      ).name
+                    : `Product #${selectedProductId}`
+                  }
+
                 </h2>
 
                 <p>
@@ -898,11 +1188,55 @@ function AdminInventory() {
             <div className="inventory-manage-content">
 
 
+              {/* ============================================= */}
+              {/* SELECTED PRODUCT                               */}
+              {/* ============================================= */}
+
               <div className="inventory-manage-product">
 
-                <div className="inventory-manage-icon">
-                  📦
+
+                <div
+                  className="inventory-manage-icon"
+                  style={{
+                    overflow: 'hidden',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+
+                  {getProductById(
+                    selectedProductId
+                  )?.imageUrl ? (
+
+                    <img
+                      src={
+                        getProductById(
+                          selectedProductId
+                        ).imageUrl
+                      }
+                      alt={
+                        getProductById(
+                          selectedProductId
+                        ).name
+                      }
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
+                      }}
+                    />
+
+                  ) : (
+
+                    <span>
+                      📦
+                    </span>
+
+                  )}
+
                 </div>
+
 
                 <div>
 
@@ -911,13 +1245,26 @@ function AdminInventory() {
                   </span>
 
                   <strong>
-                    #{selectedProductId}
+
+                    {getProductById(
+                      selectedProductId
+                    )
+                      ? getProductById(
+                          selectedProductId
+                        ).name
+                      : `#${selectedProductId}`
+                    }
+
                   </strong>
 
                 </div>
 
               </div>
 
+
+              {/* ============================================= */}
+              {/* MANAGE FORM                                    */}
+              {/* ============================================= */}
 
               <div className="inventory-manage-form">
 
@@ -942,6 +1289,7 @@ function AdminInventory() {
 
 
                 <div className="inventory-manage-actions">
+
 
                   <button
                     type="button"
@@ -990,6 +1338,7 @@ function AdminInventory() {
                     Cancel
                   </button>
 
+
                 </div>
 
               </div>
@@ -1003,7 +1352,10 @@ function AdminInventory() {
       </div>
 
     </main>
+
   )
+
 }
+
 
 export default AdminInventory
