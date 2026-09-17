@@ -1,0 +1,39 @@
+task: try to create multiple instances and play with it
+ 
+Eureka Server (Service Discovery)
+Product Service
+Order Service
+Feign Client (Synchronous Communication)
+API Gateway
+Circuit Breaker
+ 
+Try: Spring Cloud Config Server
+ 
+Demonstrate Externalized Configuration
+Centralized Configuration Management
+ 
+RabbitMQ
+ 
+JWT Authentication
+ 
+Write Juint Test Cases
+ 
+ ----------------------------------------------------------------------------------------------------
+ 
+ Hello,  
+As part of the PowerUp/Ocean training, please attend this mock evaluation.
+ 
+Action Required (ignore if already filled): 
+Fill in the Project Experience Details form using the link below before the evaluation meeting:  
+Please fill out this form
+ 
+Topics expected to prepare: 
+Java (Core, 8/11/17 features, Design Patterns, Unit Testing)  
+JPA, JDBC, Hibernate, SQL  
+Spring Core, Spring Boot, Actuators, Data JPA  
+Microservices (API Gateway, CQRS, SAGA, Service Discovery)  
+DevOps (VCS, CI/CD, Docker, Kubernetes, Maven)  
+Knowledge of AWS services will be an added advantage.
+ 
+PS: Please make sure to install Java and Eclipse from the company before joining the mock interview.  
+You will have to be on camera, and the sessions will be recorded.
