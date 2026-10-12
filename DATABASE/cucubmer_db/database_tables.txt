@@ -1,0 +1,2 @@
+create database orbit_inventory;
+create database orbit_orders;
